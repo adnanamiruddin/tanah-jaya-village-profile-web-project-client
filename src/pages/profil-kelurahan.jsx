@@ -23,8 +23,8 @@ export default function VillageProfilePage() {
               loop
               playsInline
               controls
-              // autoPlay
-              // poster="/image-home-hero.jpg" // Tambahkan poster image jika ada
+              autoPlay
+              // poster="/image-home-hero.jpg"
             >
               <source src="/video-village-profile.mp4" type="video/mp4" />
               Browser Anda tidak mendukung pemutaran video.
