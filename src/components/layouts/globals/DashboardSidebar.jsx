@@ -8,7 +8,7 @@ import { FiLogOut } from "react-icons/fi";
 import { MdAccountCircle, MdDashboard } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/features/userSlice";
-import { auth } from "@/api/config/firebase.config";
+// import { auth } from "@/api/config/firebase.config";
 
 const dashboardLinks = [
   {
@@ -40,16 +40,16 @@ export default function DashboardSidebar() {
 
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      dispatch(setUser(null));
-      toast.info("Bye bye 👋");
-      router.push("/");
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await auth.signOut();
+  //     dispatch(setUser(null));
+  //     toast.info("Bye bye 👋");
+  //     router.push("/");
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   }
+  // };
 
   return (
     <>
