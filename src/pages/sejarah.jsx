@@ -10,7 +10,7 @@ export default function HistoryPage() {
       />
 
       <Image
-        src="/image-sample-map.png"
+        src="/image-home-hero.jpg"
         alt="Peta Spot Wisata Tanah Jaya"
         width={500}
         height={500}

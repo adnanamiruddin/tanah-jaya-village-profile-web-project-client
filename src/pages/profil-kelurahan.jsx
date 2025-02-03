@@ -24,7 +24,6 @@ export default function VillageProfilePage() {
               playsInline
               controls
               autoPlay
-              
               // poster="/image-home-hero.jpg"
             >
               <source src="/video-village-profile.mp4" type="video/mp4" />

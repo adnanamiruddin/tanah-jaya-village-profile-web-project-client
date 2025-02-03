@@ -4,12 +4,10 @@ import PageHeaderTitle from "@/components/layouts/globals/PageHeaderTitle";
 export default function DisasterMitigationPage() {
   return (
     <div className="pb-4 md:px-24 md:mt-12 md:pb-10">
-      <div className="px-2">
-        <PageHeaderTitle
-          title="MITIGASI BENCANA"
-          description="Informasi seputar mitigasi bencana di Kelurahan Tanah Jaya"
-        />
-      </div>
+      <PageHeaderTitle
+        title="MITIGASI BENCANA"
+        description="Informasi seputar mitigasi bencana di Kelurahan Tanah Jaya"
+      />
 
       <Image
         src="/image-sample-map.png"

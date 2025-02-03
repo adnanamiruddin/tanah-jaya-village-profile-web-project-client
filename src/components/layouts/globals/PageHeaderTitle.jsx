@@ -12,7 +12,7 @@ export default function PageHeaderTitle({ title, description, bgSkyOnly }) {
         <div className="absolute -bottom-0.5 left-0 w-full h-1 bg-gradient-to-r from-sky-400 to-teal-300 rounded-full"></div>
       </h1>
 
-      <p className="text-lg text-gray-600 mt-2">{description}</p>
+      <p className="text-lg text-gray-600 mt-2 px-6">{description}</p>
     </div>
   );
 }
