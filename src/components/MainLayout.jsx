@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import usersApi from "@/api/modules/users.api";
+// import usersApi from "@/api/modules/users.api";
 import { setUser } from "@/redux/features/userSlice";
 import { ToastContainer } from "react-toastify";
 import Navbar from "@/components/layouts/globals/Navbar";
@@ -20,15 +20,15 @@ export default function MainLayout({ children }) {
 
   const [isCarouselPassed, setIsCarouselPassed] = useState(false);
 
-  useEffect(() => {
-    const authUser = async () => {
-      const { response, error } = await usersApi.getProfile();
-      if (response) dispatch(setUser(response));
-      if (error) dispatch(setUser(null));
-    };
-    if (localStorage.getItem("actkn")) authUser();
-    else dispatch(setUser(null));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const authUser = async () => {
+  //     const { response, error } = await usersApi.getProfile();
+  //     if (response) dispatch(setUser(response));
+  //     if (error) dispatch(setUser(null));
+  //   };
+  //   if (localStorage.getItem("actkn")) authUser();
+  //   else dispatch(setUser(null));
+  // }, [dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
