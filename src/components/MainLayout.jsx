@@ -8,11 +8,11 @@ import { ToastContainer } from "react-toastify";
 import Navbar from "@/components/layouts/globals/Navbar";
 import Footer from "@/components/layouts/globals/Footer";
 import HomeHero from "./layouts/HomeHero";
-import DashboardSidebar from "./layouts/globals/DashboardSidebar";
 import ProtectedPage from "./utils/ProtectedPage";
 import ModalSubmitButton from "./layouts/functions/ModalSubmitButton";
 
 import "react-toastify/dist/ReactToastify.css";
+import Sidebar from "./layouts/globals/dashboard-nav/Sidebar";
 
 export default function MainLayout({ children }) {
   const dispatch = useDispatch();
@@ -20,15 +20,24 @@ export default function MainLayout({ children }) {
 
   const [isCarouselPassed, setIsCarouselPassed] = useState(false);
 
-  // useEffect(() => {
-  //   const authUser = async () => {
-  //     const { response, error } = await usersApi.getProfile();
-  //     if (response) dispatch(setUser(response));
-  //     if (error) dispatch(setUser(null));
-  //   };
-  //   if (localStorage.getItem("actkn")) authUser();
-  //   else dispatch(setUser(null));
-  // }, [dispatch]);
+  useEffect(() => {
+    const authUser = async () => {
+      // const { response, error } = await usersApi.getProfile();
+      // if (response) dispatch(setUser(response));
+      // if (error) dispatch(setUser(null));
+      dispatch(
+        setUser({
+          userUID: "userUID",
+          firstName: "Adnan",
+          lastName: "Amiruddin",
+          username: "adnanamiruddin",
+        })
+      );
+    };
+    // if (localStorage.getItem("actkn")) authUser();
+    // else dispatch(setUser(null));
+    authUser();
+  }, [dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,22 +79,26 @@ export default function MainLayout({ children }) {
       </div>
 
       {router.asPath.includes("dashboard") ? (
-        <ProtectedPage>
-          <div className="hidden md:block bg-[#071015] text-white min-h-screen">
-            <DashboardSidebar />
+        <div className="bg-gray-100 text-black min-h-screen">
+          <ProtectedPage>
+            <div className="hidden md:flex">
+              <Sidebar />
 
-            <div className="py-10 px-8 mt-14 sm:ml-64">{children}</div>
-          </div>
+              <div className="w-full bg-white pt-16 md:w-4/5 md:pt-0 font-sans">
+                {children}
+              </div>
+            </div>
 
-          <div className="md:hidden bg-[#071015] text-white min-h-screen flex justify-center items-center flex-col gap-8">
-            <h1 className="font-semibold text-3xl text-center">
-              Silahkan akses menggunakan laptop
-            </h1>
-            <ModalSubmitButton onClick={() => router.push("/")}>
-              Kembali
-            </ModalSubmitButton>
-          </div>
-        </ProtectedPage>
+            <div className="md:hidden bg-gradient-to-br from-sky-200 to-white min-h-screen flex justify-center items-center flex-col gap-8">
+              <h1 className="font-semibold text-3xl text-center">
+                Silahkan akses menggunakan laptop!
+              </h1>
+              <ModalSubmitButton onClick={() => router.push("/")}>
+                Kembali
+              </ModalSubmitButton>
+            </div>
+          </ProtectedPage>
+        </div>
       ) : router.asPath === "/" ? (
         <>
           <HomeHero />

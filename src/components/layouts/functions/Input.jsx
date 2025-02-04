@@ -20,7 +20,7 @@ export default function Input({
         placeholder={placeholder}
         onChange={onChange}
         disabled={disabled}
-        className="w-full bg-[#19161C] py-3 px-4 rounded border border-gray-400 focus:ring-[0.5px] focus:ring-gray-500 focus:outline-none disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-600"
+        className="w-full bg-white py-3 px-4 rounded border border-gray-400 focus:ring-[0.5px] focus:ring-gray-500 focus:outline-none disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-600"
       />
       {error ? (
         <div className="label">

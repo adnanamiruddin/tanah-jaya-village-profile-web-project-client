@@ -71,8 +71,10 @@ export default function Navbar({ isCarouselPassed }) {
               : "text-white"
           } transition-colors duration-500`}
         >
-          <h1 className="font-mono text-2xl font-bold">Tanah Jaya</h1>
-          <p className="ms-0.5">Kab. Bulukumba</p>
+          <h1 className="-mt-1 text-2xl font-serif font-bold">Tanah Jaya</h1>
+          <p className="ms-0.5 mt-0.5 font-sans font-semibold uppercase">
+            Kab. Bulukumba
+          </p>
         </div>
       </Link>
 
@@ -113,8 +115,10 @@ export default function Navbar({ isCarouselPassed }) {
                 className="w-14 h-14 object-contain"
               />
               <div>
-                <h1 className="font-mono text-2xl font-bold">Tanah Jaya</h1>
-                <p className="ms-0.5">Kec. Kajang, Kab. Bulukumba</p>
+                <h1 className="text-2xl font-serif font-bold">Tanah Jaya</h1>
+                <p className="ms-0.5 font-sans font-semibold uppercase">
+                  Kec. Kajang, Kab. Bulukumba
+                </p>
               </div>
             </div>
             {navItems.map((link) => (

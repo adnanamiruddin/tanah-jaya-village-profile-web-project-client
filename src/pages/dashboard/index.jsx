@@ -1,81 +1,42 @@
-import toolsApi from "@/api/modules/tools.api";
-import GlobalLoading from "@/components/layouts/globals/GlobalLoading";
-import LonelyCat from "@/components/layouts/globals/LonelyCat";
-import ToolRequestModal from "@/components/layouts/modals/ToolRequestModal";
-import ToolCard from "@/components/layouts/ToolCard";
-import { useEffect, useState } from "react";
+import { selectUser } from "@/redux/features/userSlice";
+import Image from "next/image";
+import { useSelector } from "react-redux";
 
-export default function DashboardPage() {
-  const [data, setData] = useState([]);
-  const [items, setItems] = useState(data);
-  const [expandedCard, setExpandedCard] = useState(null);
-
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-  const getTools = async () => {
-    const { response } = await toolsApi.getToolsByStatus({
-      status: "approved",
-    });
-    if (response) {
-      setData(response);
-      setItems(response);
-      setTimeout(() => {
-        setIsDataLoaded(true);
-      }, 1000);
-    }
-  };
-  //
-  useEffect(() => {
-    getTools();
-  }, []);
-
-  const handleCardClick = (index) => {
-    setExpandedCard(index === expandedCard ? null : index);
-  };
-
-  const [selectedToolDetail, setSelectedToolDetail] = useState(null);
-  //
-  const handleShowToolDetail = (tool) => {
-    setSelectedToolDetail(tool);
-    document.getElementById("tool_request_modal").showModal();
-  };
+export default function DashboardHomePage() {
+  const { user } = useSelector(selectUser);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Beranda</h1>
+    <div className="overflow-hidden">
+      <div>
+        <Image
+          priority
+          src="/image-home-hero.jpg"
+          alt="Homepage Image"
+          width={1920}
+          height={1080}
+          className="w-full h-80 object-cover"
+        />
 
-      {isDataLoaded ? (
-        <div className="mt-6 flex gap-5 flex-wrap md:flex-row relative h-full justify-center items-center pt-2 pb-16">
-          {items.length > 0 ? (
-            <>
-              {items.map((item, i) => (
-                <ToolCard
-                  key={i}
-                  name={item.name}
-                  image={item.imageURL}
-                  description={item.description}
-                  link={item.link}
-                  video={item.videoURL}
-                  isExpanded={i === expandedCard}
-                  onClick={() => handleCardClick(i)}
-                  handleDetailClick={() => handleShowToolDetail(item)}
-                />
-              ))}
-            </>
-          ) : (
-            <div className="mt-12">
-              <LonelyCat />
-              <p className="mt-8 text-center font-semibold text-lg">
-                Tidak ada AI ditemukan
-              </p>
-            </div>
-          )}
+        <div className="ms-24 -mt-24 w-max relative">
+          <Image
+            src="/icon-man.png"
+            alt={user.username || "User"}
+            width={500}
+            height={500}
+            className="w-40 h-40 object-cover rounded-full"
+            // Disabled right click
+            onContextMenu={(e) => e.preventDefault()}
+          />
         </div>
-      ) : (
-        <GlobalLoading />
-      )}
+      </div>
 
-      <ToolRequestModal selectedToolRequest={selectedToolDetail} />
+      <div className="ps-20 pe-12 py-8">
+        <div className="w-full">
+          <h5 className="font-bold text-4xl">
+            Selamat datang, {`${user.firstName} ${user.lastName}` || "User"}
+          </h5>
+        </div>
+      </div>
     </div>
   );
 }
