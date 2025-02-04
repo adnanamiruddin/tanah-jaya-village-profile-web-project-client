@@ -9,7 +9,7 @@ export default function NewsDetailPage() {
   const { slug } = router.query;
 
   return (
-    <div className="pb-4 md:px-24 md:mt-12 md:pb-10">
+    <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
       <div className="-m-2 -mt-4 md:flex md:items-start md:gap-3">
         <div className="w-full md:w-[75%]">
           <HeaderDetailPage title="Pemerintah Kelurahan Tanah Jaya" />
@@ -19,7 +19,7 @@ export default function NewsDetailPage() {
               <FaRegCalendarAlt className="inline mb-0.5 me-1 text-lg" />{" "}
               <span className="text-black">Senin, 3 November 2024</span>
             </p>
-            <p className="text-[#A0A0A0]">
+            <p className="mt-1 text-[#A0A0A0]">
               <CgProfile className="inline mb-0.5 me-1 text-lg" /> Ditulis oleh{" "}
               <span className="text-black">Muh. Adnan Putra Amiruddin</span>
             </p>

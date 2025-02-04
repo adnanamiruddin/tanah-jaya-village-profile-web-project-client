@@ -5,7 +5,7 @@ export default function PageHeaderTitle({ title, description, bgSkyOnly }) {
         bgSkyOnly ? "bg-sky-50" : "bg-gradient-to-b from-sky-50 to-gray-50"
       }`}
     >
-      <h1 className="text-3xl font-bold text-sky-800 mb-4 relative inline-block">
+      <h1 className="text-3xl font-bold text-sky-800 mb-4 relative inline-block md:text-4xl">
         <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-teal-500">
           {title}
         </span>

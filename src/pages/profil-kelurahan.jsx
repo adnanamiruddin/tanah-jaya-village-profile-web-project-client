@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function VillageProfilePage() {
   return (
-    <div className="pb-4 md:px-24 md:mt-12 md:pb-10">
+    <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
       <PageHeaderTitle
         title="PROFIL TANAH JAYA"
         description="Mengenal lebih dekat kehidupan masyarakat Tanah Jaya"
@@ -42,54 +42,52 @@ export default function VillageProfilePage() {
       </div>
 
       {/* VISI DAN MISI */}
-      <div className="mt-12">
-        <h1 className="text-2xl font-bold text-center mb-4 text-sky-700">
+      <div className="mt-12 md:mt-24">
+        <h1 className="text-2xl font-bold text-center mb-4 text-sky-700 md:text-4xl">
           VISI DAN MISI KELURAHAN
         </h1>
 
-        <div className="mt-2 bg-white rounded p-2">
-          <Image
-            priority
-            src="/image-home-hero.jpg"
-            alt="Visi dan Misi Kelurahan"
-            width={500}
-            height={500}
-            className="w-full h-full object-cover rounded-md"
-          />
-        </div>
+        <div className="bg-transparent md:flex md:bg-white md:p-2 md:border md:border-gray-200 md:shadow-lg md:rounded-lg">
+          <div className="mt-2 bg-white rounded p-2 md:mt-0 md:w-[55%] md:bg-transparent">
+            <Image
+              priority
+              src="/image-home-hero.jpg"
+              alt="Visi dan Misi Kelurahan"
+              width={500}
+              height={500}
+              className="w-full h-full object-cover rounded-md md:h-[30rem]"
+            />
+          </div>
 
-        <div className="mt-2 bg-white rounded py-4 px-6 flex flex-col gap-4">
-          <Dropdown title="Visi Kelurahan Tanah Jaya">
-            <p>
-              &quot;Mewujudkan Kelurahan Tanah Jaya yang religius, mandiri,
-              maju, sejahtera, dan berbudaya&quot;
-            </p>
-          </Dropdown>
+          <div className="mt-2 bg-white rounded py-4 px-6 flex flex-col gap-4 md:mt-0 md:w-[45%] md:bg-transparent">
+            <Dropdown title="Visi Kelurahan Tanah Jaya">
+              <p>
+                &quot;Mewujudkan Kelurahan Tanah Jaya yang religius, mandiri,
+                maju, sejahtera, dan berbudaya&quot;
+              </p>
+            </Dropdown>
 
-          <Dropdown title="Misi Kelurahan Tanah Jaya" showBorderTop>
-            <p>1. Meningkatkan kualitas sumber daya manusia</p>
-            <p>2. Meningkatkan perekonomian masyarakat</p>
-            <p>3. Meningkatkan kualitas lingkungan hidup</p>
-            <p>4. Meningkatkan pelayanan publik</p>
-            <p>5. Meningkatkan kualitas keamanan dan ketertiban</p>
-          </Dropdown>
+            <Dropdown title="Misi Kelurahan Tanah Jaya" showBorderTop>
+              <p>1. Meningkatkan kualitas sumber daya manusia</p>
+              <p>2. Meningkatkan perekonomian masyarakat</p>
+              <p>3. Meningkatkan kualitas lingkungan hidup</p>
+              <p>4. Meningkatkan pelayanan publik</p>
+              <p>5. Meningkatkan kualitas keamanan dan ketertiban</p>
+            </Dropdown>
+          </div>
         </div>
       </div>
 
       {/* SOTK */}
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold text-center mb-2 text-sky-700">
+      <div className="mt-10 md:mt-24">
+        <h1 className="text-2xl font-bold text-center mb-2 text-sky-700 md:text-4xl md:text-start">
           SOTK
         </h1>
-        <p className="text-center mb-4">
-          Struktur Organisasi dan Tata Kerja <br />
-          Kelurahan Tanah Jaya
+        <p className="text-center mb-4 px-6 md:text-start md:px-0 md:text-lg">
+          Struktur Organisasi dan Tata Kerja Kelurahan Tanah Jaya
         </p>
 
-        <div
-          className="grid grid-cols-2 justify-center gap-4"
-          // data-aos="fade-right"
-        >
+        <div className="flex gap-4 overflow-auto md:grid grid-cols-4">
           <EmployeeItem
             photo="/icon-man.png"
             name="Nama Pegawai"
@@ -130,10 +128,13 @@ export default function VillageProfilePage() {
       </div>
 
       {/* GALERI TANAH JAYA */}
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold text-center mb-4 text-sky-700">
-          GALERI TANAH JAYA
+      <div className="mt-10 md:mt-24">
+        <h1 className="text-2xl font-bold text-center mb-2 text-sky-700 md:text-4xl md:text-start">
+          GALERI
         </h1>
+        <p className="text-center mb-6 px-6 md:text-start md:px-0 md:text-lg">
+          Menampilkan foto-foto di sekitar Kelurahan Tanah Jaya
+        </p>
 
         <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-4">
           <ImageHoverEffect

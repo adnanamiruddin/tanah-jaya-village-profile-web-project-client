@@ -3,13 +3,13 @@ import UmkmItem from "@/components/layouts/UmkmItem";
 
 export default function UmkmPage() {
   return (
-    <div className="pb-4 md:px-24 md:mt-12 md:pb-10">
+    <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
       <PageHeaderTitle
         title="UMKM"
         description="Informasi seputar UMKM di Kelurahan Tanah Jaya"
       />
 
-      <div className="grid grid-cols-1 gap-5 overflow-auto">
+      <div className="grid grid-cols-1 gap-5 overflow-auto md:grid-cols-3 md:gap-4">
         <UmkmItem
           image="/image-sample-umkm.jpg"
           name="Kedai Papai"

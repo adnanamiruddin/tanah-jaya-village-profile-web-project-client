@@ -48,5 +48,5 @@ export default function HomeMapLocation() {
     };
   }, []);
 
-  return <div id="map" className="w-full h-96"></div>;
+  return <div id="map" className="w-full h-96 md:h-[30rem]"></div>;
 }

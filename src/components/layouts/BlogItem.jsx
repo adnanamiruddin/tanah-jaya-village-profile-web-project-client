@@ -5,14 +5,14 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 
 export default function BlogItem({ image, title, slug, date }) {
   return (
-    <div className="relative pb-24 bg-white border-2 border-gray-200 shadow-lg rounded-lg hover:shadow-2xl transition duration-300 md:min-w-[25%]">
+    <div className="relative pb-24 bg-white border-2 border-gray-200 shadow-lg rounded-lg hover:shadow-2xl transition duration-300">
       <Image
         priority
         src={image}
         alt={title}
         width={500}
         height={500}
-        className="w-96 h-56 object-cover rounded-t-md"
+        className="w-96 h-56 object-cover rounded-t-md md:w-full md:h-72"
       />
 
       <div className="absolute bottom-0 p-4 rounded-t-xl rounded-b-lg bg-white w-full">

@@ -3,13 +3,13 @@ import ScheduleItem from "@/components/layouts/ScheduleItem";
 
 export default function SchedulesPage() {
   return (
-    <div className="pb-4 md:px-24 md:mt-12 md:pb-10">
+    <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
       <PageHeaderTitle
         title="ACARA TANAH JAYA"
         description="Acara terbaru seputar Kelurahan Tanah Jaya"
       />
 
-      <div className="grid grid-cols-1 gap-5 overflow-auto">
+      <div className="grid grid-cols-1 gap-5 overflow-auto md:grid-cols-3 md:gap-4">
         <ScheduleItem
           title="Rapat Kelurahan"
           date="Senin, 12 Agustus 2021"
