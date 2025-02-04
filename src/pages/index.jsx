@@ -56,16 +56,23 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-8 md:w-[45%]">
-          <HomeIcon iconSrc="/icon-shop.png" iconAlt="Icon Shop" text="UMKM" />
+          <HomeIcon
+            iconSrc="/icon-shop.png"
+            iconAlt="Icon Shop"
+            text="UMKM"
+            href="/umkm"
+          />
           <HomeIcon
             iconSrc="/icon-news.png"
             iconAlt="Icon News"
             text="Berita"
+            href="/berita"
           />
           <HomeIcon
             iconSrc="/icon-event.png"
             iconAlt="Icon Event"
             text="Acara"
+            href="/acara"
           />
         </div>
       </div>
