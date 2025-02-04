@@ -68,18 +68,28 @@ export default function HomePage() {
             text="Berita"
             href="/berita"
           />
+          <div className="hidden md:inline"></div>
+          <div className="hidden md:inline"></div>
+          <div className="hidden md:inline"></div>
+          <div className="hidden md:inline"></div>
           <HomeIcon
             iconSrc="/icon-event.png"
             iconAlt="Icon Event"
             text="Acara"
             href="/acara"
           />
+          <HomeIcon
+            iconSrc="/icon-profile.png"
+            iconAlt="Icon Profile"
+            text="Profil"
+            href="/profil-kelurahan"
+          />
         </div>
       </div>
 
       {/* SAMBUTAN */}
       <div className="mt-10 md:mt-24 md:flex md:gap-10">
-        <div className="hidden md:block md:w-[30%]">
+        <div className="hidden md:block md:w-[40%]">
           <Image
             src="/icon-man.png"
             alt="Bapak Kepala Kelurahan"
