@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import queryString from "query-string";
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_URL;
@@ -15,7 +16,7 @@ privateClient.interceptors.request.use(async (config) => {
     ...config,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("actkn")}`,
+      Authorization: `Bearer ${Cookies.get("actkn")}`,
     },
   };
 });

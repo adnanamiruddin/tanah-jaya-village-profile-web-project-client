@@ -8,7 +8,7 @@ export default function UmkmItem({ image, name, slug, price, fullWidth }) {
     <div
       className={`bg-white ${
         fullWidth ? "w-full" : "w-[19rem]"
-      } flex-shrink-0 border border-gray-200 shadow-lg rounded-lg hover:shadow-2xl transition duration-300`}
+      } flex-shrink-0 border border-gray-200 shadow-lg rounded-lg hover:shadow-2xl transition duration-300 md:flex-grow`}
     >
       <Image
         priority

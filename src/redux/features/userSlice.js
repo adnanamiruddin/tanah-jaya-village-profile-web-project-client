@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
 export const userSlice = createSlice({
   name: "User",
@@ -8,10 +9,8 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       if (action.payload === null) {
-        localStorage.removeItem("actkn");
-      } else {
-        if (action.payload.token)
-          localStorage.setItem("actkn", action.payload.token);
+        Cookies.remove("actkn");
+        Cookies.remove("lggnnusr");
       }
       state.user = action.payload;
     },

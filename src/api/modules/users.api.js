@@ -2,24 +2,25 @@ import publicClient from "../clients/public.client";
 import privateClient from "../clients/private.client";
 
 const usersEndpoint = {
-  signUp: "/users/sign-up",
+  // signUp: "/users/sign-up",
   signIn: "/users/sign-in",
   profile: "/users/profile",
 };
 
 const usersApi = {
-  signUp: async ({ userUID, firstName, lastName }) => {
-    try {
-      const response = await publicClient.post(usersEndpoint.signUp, {
-        userUID,
-        firstName,
-        lastName,
-      });
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  // signUp: async ({ userUID, firstName, lastName, email }) => {
+  //   try {
+  //     const response = await publicClient.post(usersEndpoint.signUp, {
+  //       userUID,
+  //       firstName,
+  //       lastName,
+  //       email,
+  //     });
+  //     return { response };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // },
 
   signIn: async ({ userUID }) => {
     try {

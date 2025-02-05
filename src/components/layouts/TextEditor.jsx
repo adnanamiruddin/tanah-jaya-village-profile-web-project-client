@@ -1,3 +1,4 @@
+import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
 import dynamic from "next/dynamic";
 
 import "react-quill/dist/quill.snow.css";
@@ -5,6 +6,27 @@ import "react-quill/dist/quill.snow.css";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function TextEditor({ id, label, content, setContent }) {
+  // Fungsi untuk menangani gambar yang diunggah ke editor
+  const handleImageUpload = async () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      const uploadImageUrl = await uploadImageToFirebaseStorage({
+        storageFolderName: "village_head_photo",
+        uploadImage: file,
+      });
+
+      // Tambahkan URL gambar ke dalam editor
+      const quill = document.querySelector(".ql-editor");
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, "image", uploadImageUrl);
+    };
+  };
+
   const modules = {
     toolbar: [
       [{ header: "1" }, { header: "2" }, { font: [] }],
@@ -16,13 +38,16 @@ export default function TextEditor({ id, label, content, setContent }) {
         { indent: "-1" },
         { indent: "+1" },
       ],
-      ["link"],
+      ["link", "image", "video"],
       [{ align: [] }],
       ["clean"],
     ],
     clipboard: {
       matchVisual: false,
     },
+    // handlers: {
+    //   image: handleImageUpload,
+    // },
   };
 
   return (
@@ -45,6 +70,8 @@ export default function TextEditor({ id, label, content, setContent }) {
           "bullet",
           "indent",
           "link",
+          "image",
+          "video",
         ]}
         placeholder="Ketik di sini..."
         modules={modules}

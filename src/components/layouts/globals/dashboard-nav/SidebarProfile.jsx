@@ -18,7 +18,6 @@ export default function SidebarProfile() {
   const handleLogout = () => {
     dispatch(setUser(null));
     Cookies.remove("actkn");
-    Cookies.remove("rfrshtkn");
     Cookies.remove("lggnnusr");
     router.push("/");
   };
@@ -27,13 +26,13 @@ export default function SidebarProfile() {
     <div className="flex items-center gap-3">
       <Image
         src="/icon-man.png"
-        alt={user.username || "User"}
+        alt={user.firstName || "User"}
         width={200}
         height={200}
         className="w-9 h-9 object-cover rounded-full"
       />
       <h6 className="flex items-center">
-        {user.username || "User"}
+        {user.firstName || "User"}
         <div>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -50,7 +49,7 @@ export default function SidebarProfile() {
               <div className="font-sans flex flex-col items-center">
                 <Image
                   src="/icon-man.png"
-                  alt={user.username || "User"}
+                  alt={user.firstName || "User"}
                   width={500}
                   height={500}
                   className="w-14 h-14 object-cover rounded-full"

@@ -4,7 +4,7 @@ import MainLayout from "@/components/MainLayout";
 
 import "leaflet/dist/leaflet.css";
 import "@/styles/globals.css";
-import "@/styles/global-loading.css";
+import "@/styles/loading.css";
 import "@/styles/lonely-cat.css";
 
 export default function App({ Component, pageProps }) {

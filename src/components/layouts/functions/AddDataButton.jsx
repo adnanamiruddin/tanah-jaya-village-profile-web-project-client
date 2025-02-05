@@ -1,12 +1,14 @@
 import { IoMdAdd } from "react-icons/io";
 
-export default function AddDataButton({ onClick, children }) {
+export default function AddDataButton({ name, onClick, disabled, children }) {
   return (
     <button
+      name={name}
       onClick={onClick}
-      className="bg-gradient-to-br from-green-800 to-green-400 text-white py-2 px-4 font-semibold rounded-md flex items-center hover:brightness-110"
+      disabled={disabled}
+      className="bg-white border-[1.5px] border-emerald-700 py-2 px-3 text-emerald-700 font-semibold rounded-md flex items-center hover:bg-emerald-500 hover:border-emerald-300 hover:text-white disabled:bg-gray-300 disabled:text-emerald-500 disabled:border-emerald-500 disabled:cursor-not-allowed"
     >
-      <IoMdAdd className={`text-2xl ${children ? "me-2" : ""}`} /> {children}
+      <IoMdAdd className="text-2xl me-2" /> {children}
     </button>
   );
 }

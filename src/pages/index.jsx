@@ -9,8 +9,8 @@ import {
   FaSchoolFlag,
 } from "react-icons/fa6";
 import { MdFamilyRestroom } from "react-icons/md";
-import { IoIosMan, IoIosWoman, IoIosMove } from "react-icons/io";
-import { GiTemporaryShield } from "react-icons/gi";
+import { IoIosMan, IoIosWoman } from "react-icons/io";
+import { AiOutlineEnvironment } from "react-icons/ai";
 import { FaSchool } from "react-icons/fa";
 import { MdArrowOutward } from "react-icons/md";
 import EnvironmentDiagramChart from "@/components/layouts/EnvironmentDiagramChart";
@@ -223,69 +223,32 @@ export default function HomePage() {
           pelayanan publik yang efektif dan efisien
         </p>
 
-        <div className="grid grid-cols-3 gap-y-6 mb-6 md:flex md:justify-center md:flex-wrap md:gap-4 md:gap-y-10 md:mb-12">
-          <div className="w-[20%] mx-auto">
+        <div className="grid grid-cols-3 gap-y-6 md:flex md:justify-center md:flex-wrap md:gap-4 md:gap-y-12">
+          <div className="w-[30%] mx-auto">
             <HomePopulationAdministration amount={2222} type="Penduduk">
               <FaPeopleGroup className="text-5xl md:text-8xl" />
             </HomePopulationAdministration>
           </div>
-          <div className="w-[20%] mx-auto">
-            <HomePopulationAdministration amount={666} type="Kepala Keluarga">
-              <MdFamilyRestroom className="text-5xl md:text-8xl" />
-            </HomePopulationAdministration>
-          </div>
-
-          <div className="w-[20%] mx-auto">
+          <div className="w-[30%] mx-auto">
             <HomePopulationAdministration amount={222} type="Laki-Laki">
               <IoIosMan className="text-5xl md:text-8xl" />
             </HomePopulationAdministration>
           </div>
-          <div className="w-[20%] mx-auto">
+          <div className="w-[30%] mx-auto">
             <HomePopulationAdministration amount={111} type="Perempuan">
               <IoIosWoman className="text-5xl md:text-8xl" />
             </HomePopulationAdministration>
           </div>
 
-          <div className="w-[20%] mx-auto md:ms-auto md:me-0">
-            <HomePopulationAdministration amount={111} type="Mutasi Penduduk">
-              <IoIosMove className="text-5xl md:text-8xl" />
-            </HomePopulationAdministration>
-          </div>
-          <div className="w-[20%] mx-auto">
-            <HomePopulationAdministration
-              amount={111}
-              type="Penduduk Sementara"
-            >
-              <GiTemporaryShield className="text-5xl md:text-8xl" />
-            </HomePopulationAdministration>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="text-xl text-center font-semibold mb-2 md:text-3xl md:mb-4">
-            Distribusi Penduduk per Lingkungan
-          </h2>
-          <EnvironmentDiagramChart />
-        </div>
-
-        <div>
-          <h2 className="text-xl text-center font-semibold mb-4 md:text-3xl md:mb-8">
-            Jumlah Sekolah
-          </h2>
-          <div className="flex justify-center flex-wrap gap-y-2">
-            <div className="w-[40%] md:w-[20%]">
-              <HomePopulationAdministration amount={4} type="SD">
-                <FaSchool className="text-5xl md:text-8xl" />
+          <div className="flex justify-center items-center col-span-3 md:gap-96">
+            <div className="w-[20%] mx-auto">
+              <HomePopulationAdministration amount={666} type="Kepala Keluarga">
+                <MdFamilyRestroom className="text-5xl md:text-8xl" />
               </HomePopulationAdministration>
             </div>
-            <div className="w-[40%] md:w-[20%]">
-              <HomePopulationAdministration amount={2222} type="SMP">
-                <Fa6School className="text-5xl md:text-8xl" />
-              </HomePopulationAdministration>
-            </div>
-            <div className="w-full md:w-[20%]">
-              <HomePopulationAdministration amount={666} type="SMA/SMK">
-                <FaSchoolFlag className="text-5xl md:text-8xl" />
+            <div className="w-[20%] mx-auto">
+              <HomePopulationAdministration amount={5} type="Lingkungan">
+                <AiOutlineEnvironment className="text-5xl md:text-8xl" />
               </HomePopulationAdministration>
             </div>
           </div>

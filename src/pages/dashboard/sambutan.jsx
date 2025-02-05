@@ -1,10 +1,92 @@
+import greetingsApi from "@/api/modules/greetings.api";
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
+import PreviewImage from "@/components/layouts/PreviewImage";
 import TextEditor from "@/components/layouts/TextEditor";
+import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
 
 export default function DashboardGreetingPage() {
+  const [data, setData] = useState({
+    villageHeadName: "",
+    villageHeadPhotoURL: "",
+  });
+  const [textEditorContent, setTextEditorContent] = useState("");
+  //
+  const [loadingSave, setLoadingSave] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [errorDataLoaded, setErrorDataLoaded] = useState(false);
+
+  const fetchData = async () => {
+    const { response, error } = await greetingsApi.getGreeting();
+    if (response) {
+      dataForm.setValues({
+        villageHeadName: response.villageHeadName,
+        villageHeadPhotoURL: response.villageHeadPhotoURL,
+      });
+      setTextEditorContent(response.greetingContent);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 500);
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
+  };
+  //
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const dataForm = useFormik({
+    initialValues: {
+      villageHeadName: data.villageHeadName,
+      villageHeadPhotoURL: data.villageHeadPhotoURL,
+    },
+    validationSchema: Yup.object({
+      villageHeadName: Yup.string().required(
+        "Nama kepala kelurahan tidak boleh kosong"
+      ),
+    }),
+    onSubmit: async (values) => {
+      if (loadingSave) return;
+
+      setLoadingSave(true);
+      try {
+        const imageUploadUrl = await uploadImageToFirebaseStorage({
+          storageFolderName: "village_head_photo",
+          uploadImage: dataForm.values.villageHeadPhotoURL,
+        });
+        values.villageHeadPhotoURL = imageUploadUrl;
+      } catch (error) {
+        toast.error(
+          "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
+        );
+        setLoadingSave(false);
+        return;
+      }
+
+      const { response, error } = await greetingsApi.saveGreeting({
+        villageHeadName: values.villageHeadName,
+        villageHeadPhotoURL: values.villageHeadPhotoURL,
+        greetingContent: textEditorContent,
+      });
+      if (response) {
+        toast.success("Berhasil menyimpan data");
+      }
+      if (error) {
+        toast.error(error.message);
+      }
+      setLoadingSave(false);
+    },
+  });
+
   return (
     <div className="h-full overflow-hidden">
       <DashboardHeader>SAMBUTAN</DashboardHeader>
@@ -14,9 +96,11 @@ export default function DashboardGreetingPage() {
           <h2 className="font-bold text-2xl">Konten Sambutan</h2>
           {/*  */}
           <SaveButton
-            name="saveFacilitiesButton"
-            // onClick={handleSaveFacilities}
-            // disabled={loading}
+            name="saveButton"
+            onClick={() => {
+              dataForm.handleSubmit();
+            }}
+            disabled={loadingSave}
           >
             Simpan
           </SaveButton>
@@ -28,19 +112,23 @@ export default function DashboardGreetingPage() {
               label="Nama Kepala Kelurahan"
               placeholder="Masukkan nama kepala kelurahan..."
               name="villageHeadName"
-              // value={addDataForm.values.villageHeadName}
-              // onChange={addDataForm.handleChange}
-              // error={
-              //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-              // }
-              // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
+              value={dataForm.values.villageHeadName}
+              onChange={dataForm.handleChange}
+              error={
+                dataForm.touched.villageHeadName &&
+                dataForm.errors.villageHeadName !== undefined
+              }
+              helperText={
+                dataForm.touched.villageHeadName &&
+                dataForm.errors.villageHeadName
+              }
             />
           </div>
 
           <div className="w-1/2">
             <UploadFileField
               name="villageHeadPhoto"
-              label="Upload Foto"
+              label="Foto Kepala Kelurahan"
               // onChange={(e) => {
               //   setImageUpload(e.target.files[0]);
               // }}
@@ -48,12 +136,17 @@ export default function DashboardGreetingPage() {
           </div>
         </div>
 
+        {/* <PreviewImage
+          image={data.villageHeadPhotoURL}
+          alt={data.villageHeadName}
+        /> */}
+
         <div className="mt-4 overflow-x-auto">
           <TextEditor
-            id="facilitiesTextEditor"
+            id="greetingTextEditor"
             label="Isi Sambutan"
-            // content={content}
-            // setContent={setContent}
+            content={textEditorContent}
+            setContent={setTextEditorContent}
           />
         </div>
       </div>
