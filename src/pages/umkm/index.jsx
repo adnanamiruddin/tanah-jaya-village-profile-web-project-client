@@ -1,4 +1,5 @@
 import PageHeaderTitle from "@/components/layouts/globals/PageHeaderTitle";
+import PreviewDocument from "@/components/layouts/PreviewDocument";
 import UmkmItem from "@/components/layouts/UmkmItem";
 
 export default function UmkmPage() {
@@ -8,6 +9,10 @@ export default function UmkmPage() {
         title="UMKM"
         description="Informasi seputar UMKM di Kelurahan Tanah Jaya"
       />
+
+      <div className="my-4">
+        <PreviewDocument document="/katalog-umkm.pdf" title="Katalog UMKM" />
+      </div>
 
       <div className="grid grid-cols-1 gap-5 overflow-auto md:grid-cols-3 md:gap-4">
         <UmkmItem
