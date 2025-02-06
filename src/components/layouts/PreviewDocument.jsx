@@ -22,25 +22,13 @@ export default function PreviewDocument({ document, title }) {
             <div>
               <embed
                 className="w-full h-[80vh] border-none mt-2"
-                src={
-                  document && document instanceof File
-                    ? URL.createObjectURL(document)
-                    : document
-                }
+                src={document}
                 type="application/pdf"
               />
               {/*  */}
               <p className="text-center p-4">
                 Jika PDF tidak muncul,{" "}
-                <a
-                  download
-                  href={
-                    document && document instanceof File
-                      ? URL.createObjectURL(document)
-                      : document
-                  }
-                  className="text-blue-500 underline"
-                >
+                <a download href={document} className="text-blue-500 underline">
                   klik di sini untuk mengunduh PDF
                 </a>
                 .
