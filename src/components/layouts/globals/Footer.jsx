@@ -7,6 +7,7 @@ export default function Footer() {
         <h1 className="font-mono text-3xl font-semibold">Tanah Jaya</h1>
         <p>Managed by KKNT 113 Universitas Hasanuddin</p>
         <div className="flex gap-4">
+          
           <BsInstagram />
           <BsWhatsapp />
         </div>
