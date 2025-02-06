@@ -3,13 +3,13 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const uploadImageToFirebaseStorage = async ({
   storageFolderName,
-  uploadImage,
+  image,
 }) => {
   const storageRef = ref(
     storage,
-    `${storageFolderName}/${uploadImage.name + +new Date()}`
+    `${storageFolderName || "uploads"}/${image.name + +new Date()}`
   );
-  const upload = await uploadBytes(storageRef, uploadImage);
+  const upload = await uploadBytes(storageRef, image);
   const downloadUrl = await getDownloadURL(upload.ref);
   return downloadUrl;
 };

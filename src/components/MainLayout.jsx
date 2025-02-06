@@ -51,7 +51,7 @@ export default function MainLayout({ children }) {
   return (
     <>
       <Head>
-        <title>Tanah Jaya</title>
+        <title>Kelurahan Tanah Jaya</title>
       </Head>
 
       {/* Config React Toastify START */}

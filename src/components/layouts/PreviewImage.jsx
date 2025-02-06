@@ -6,7 +6,7 @@ export default function PreviewImage({ image, alt, fullWidth }) {
       <Image
         width={500}
         height={500}
-        src={image && image instanceof File ? image : ""}
+        src={image}
         alt={alt ? alt : "Preview Image"}
         className={`object-contain border-4 border-gray-100 rounded-lg ${
           fullWidth

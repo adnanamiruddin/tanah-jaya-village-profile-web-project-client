@@ -8,11 +8,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "@/components/layouts/globals/Loading";
-// import informationApi from "@/api/modules/information.api";
+import blogsApi from "@/api/modules/blogs.api";
 import { toast } from "react-toastify";
-// import Pagination from "@/components/layouts/functions/Pagination";
-// import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
-import { formatDateWithTimeToIndo } from "@/helpers/dateHelper";
+import { formatDateToIndo } from "@/helpers/dateHelper";
 
 export default function DashboardNewsPage() {
   const router = useRouter();
@@ -25,38 +23,17 @@ export default function DashboardNewsPage() {
     useState(null);
 
   const fetchNewsData = async () => {
-    setNews([
-      {
-        id: 1,
-        slug: "slug-1",
-        title: "Judul 1",
-        status: "Aktif",
-        createdAt: "2023-08-01T00:00:00.000Z",
-      },
-      {
-        id: 2,
-        slug: "slug-2",
-        title: "Judul 2",
-        status: "draft",
-        createdAt: "2023-08-02T00:00:00.000Z",
-      },
-    ]);
-    setIsDataLoaded(true);
-
-    // const { response, error } = await informationApi.blog.getAllBlogs({
-    //   page,
-    // });
-    // if (response) {
-    //   setNews(response.data);
-    //   setTotalPage(response.pagination.lastPage);
-    //   setTimeout(() => {
-    //     setIsDataLoaded(true);
-    //   }, 1000);
-    // }
-    // if (error) {
-    //   setErrorDataLoaded(true);
-    //   toast.error("Gagal memuat data");
-    // }
+    const { response, error } = await blogsApi.getAllBlogs({});
+    if (response) {
+      setNews(response);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 1000);
+    }
+    if (error) {
+      setErrorDataLoaded(true);
+      toast.error("Gagal memuat data");
+    }
   };
   //
   useEffect(() => {
@@ -115,13 +92,13 @@ export default function DashboardNewsPage() {
                         {news.status}
                       </td>
                       <td className="w-[20%] text-start">
-                        {formatDateWithTimeToIndo(news.createdAt)}
+                        {formatDateToIndo(news.createdAt)}
                       </td>
                       <td className="w-[20%] text-start flex items-center gap-2">
                         <EditButton
                           onClick={() =>
                             router.push(
-                              `/dashboard/berita/tambah?editNewsId=${news.id}&editNewsSlug=${news.slug}`
+                              `/dashboard/berita/tambah?editBlogId=${news.id}&editBlogSlug=${news.slug}`
                             )
                           }
                         >

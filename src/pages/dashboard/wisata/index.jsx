@@ -1,12 +1,72 @@
+import blogsApi from "@/api/modules/blogs.api";
 import SaveButton from "@/components/layouts/functions/SaveButton";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 import PreviewImage from "@/components/layouts/PreviewImage";
 import TextEditor from "@/components/layouts/TextEditor";
-import { useState } from "react";
+import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function DashboardTouristSpotPage() {
-  const [coverImage, setCoverImage] = useState(null);
+  const [blogId, setBlogId] = useState("");
+  const [imageUpload, setImageUpload] = useState("");
+  const [textEditorContent, setTextEditorContent] = useState("");
+  //
+  const [loadingSave, setLoadingSave] = useState(false);
+
+  const fetchData = async () => {
+    const { response, error } = await blogsApi.getBlogBySlug({
+      slug: "spot-wisata",
+    });
+    if (response) {
+      setBlogId(response.id);
+      setImageUpload(response.coverImageURL);
+      setTextEditorContent(response.content);
+    }
+    if (error) {
+      toast.error(error.message);
+    }
+  };
+  //
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSaveButtonClicked = async () => {
+    if (loadingSave) return;
+
+    setLoadingSave(true);
+    let imageUrl = imageUpload;
+    if (imageUpload && imageUpload instanceof File) {
+      try {
+        const imageUploadUrl = await uploadImageToFirebaseStorage({
+          storageFolderName: "blog_images/cover",
+          image: imageUpload,
+        });
+        imageUrl = imageUploadUrl;
+      } catch (error) {
+        toast.error(
+          "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
+        );
+        setLoadingSave(false);
+        return;
+      }
+    }
+
+    const { response, error } = await blogsApi.editBlog({
+      blogId,
+      coverImageURL: imageUrl,
+      content: textEditorContent,
+    });
+    if (response) {
+      toast.success("Berhasil menyimpan data");
+    }
+    if (error) {
+      toast.error(error.message);
+    }
+    setLoadingSave(false);
+  };
 
   return (
     <div className="h-full overflow-hidden">
@@ -18,8 +78,8 @@ export default function DashboardTouristSpotPage() {
           {/*  */}
           <SaveButton
             name="saveButton"
-            // onClick={handleSaveFacilities}
-            // disabled={loading}
+            onClick={handleSaveButtonClicked}
+            disabled={loadingSave}
           >
             Simpan
           </SaveButton>
@@ -29,18 +89,28 @@ export default function DashboardTouristSpotPage() {
           <UploadFileField
             label="Sampul"
             onChange={(e) => {
-              setCoverImage(URL.createObjectURL(e.target.files[0]));
+              setImageUpload(e.target.files[0]);
             }}
           />
           {/*  */}
-          <PreviewImage image={coverImage} alt="Sampul" fullWidth />
+          <PreviewImage
+            image={
+              imageUpload && imageUpload instanceof File
+                ? URL.createObjectURL(imageUpload)
+                : imageUpload
+            }
+            alt="Sampul"
+            fullWidth
+          />
         </div>
 
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-6 overflow-x-auto flex gap-5">
           <TextEditor
             label="Isi Konten"
-            // content={content}
-            // setContent={setContent}
+            content={textEditorContent}
+            setContent={setTextEditorContent}
+            uploadImage
+            showPreview
           />
         </div>
       </div>

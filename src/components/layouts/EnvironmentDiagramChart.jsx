@@ -18,20 +18,23 @@ ChartJS.register(
   Legend
 );
 
-export default function EnvironmentDiagramChart() {
+export default function EnvironmentDiagramChart({
+  maleArrayData,
+  femaleArrayData,
+}) {
   const chartData = {
     labels: ["Jalaya", "Kassi", "Daloba", "Barang", "Na'nasaya"],
     datasets: [
       {
         label: "Penduduk Laki-laki",
-        data: [100, 200, 300, 400, 500],
+        data: maleArrayData,
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
       },
       {
         label: "Penduduk Perempuan",
-        data: [500, 400, 300, 200, 100],
+        data: femaleArrayData,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,

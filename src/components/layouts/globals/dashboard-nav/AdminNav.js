@@ -1,4 +1,4 @@
-import { FaBullseye, FaHistory, FaRegNewspaper } from "react-icons/fa";
+import { FaBullseye, FaRegNewspaper, FaHourglassHalf } from "react-icons/fa";
 import { IoHomeOutline, IoWarningOutline } from "react-icons/io5";
 import { MdOutlineWavingHand } from "react-icons/md";
 import { VscTypeHierarchySub } from "react-icons/vsc";
@@ -43,7 +43,7 @@ const historyNavItems = [
   {
     href: "/dashboard/sejarah",
     label: "Sejarah",
-    icon: <FaHistory className="text-2xl" />,
+    icon: <FaHourglassHalf className="text-2xl" />,
   },
 ];
 

@@ -12,15 +12,10 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 export default function DashboardGreetingPage() {
-  const [data, setData] = useState({
-    villageHeadName: "",
-    villageHeadPhotoURL: "",
-  });
+  const [imageUpload, setImageUpload] = useState("");
   const [textEditorContent, setTextEditorContent] = useState("");
   //
   const [loadingSave, setLoadingSave] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [errorDataLoaded, setErrorDataLoaded] = useState(false);
 
   const fetchData = async () => {
     const { response, error } = await greetingsApi.getGreeting();
@@ -30,13 +25,9 @@ export default function DashboardGreetingPage() {
         villageHeadPhotoURL: response.villageHeadPhotoURL,
       });
       setTextEditorContent(response.greetingContent);
-      setTimeout(() => {
-        setIsDataLoaded(true);
-      }, 500);
     }
     if (error) {
       toast.error(error.message);
-      setErrorDataLoaded(true);
     }
   };
   //
@@ -46,8 +37,8 @@ export default function DashboardGreetingPage() {
 
   const dataForm = useFormik({
     initialValues: {
-      villageHeadName: data.villageHeadName,
-      villageHeadPhotoURL: data.villageHeadPhotoURL,
+      villageHeadName: "",
+      villageHeadPhotoURL: "",
     },
     validationSchema: Yup.object({
       villageHeadName: Yup.string().required(
@@ -58,18 +49,20 @@ export default function DashboardGreetingPage() {
       if (loadingSave) return;
 
       setLoadingSave(true);
-      try {
-        const imageUploadUrl = await uploadImageToFirebaseStorage({
-          storageFolderName: "village_head_photo",
-          uploadImage: dataForm.values.villageHeadPhotoURL,
-        });
-        values.villageHeadPhotoURL = imageUploadUrl;
-      } catch (error) {
-        toast.error(
-          "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
-        );
-        setLoadingSave(false);
-        return;
+      if (imageUpload) {
+        try {
+          const imageUploadUrl = await uploadImageToFirebaseStorage({
+            storageFolderName: "village_head_photo",
+            image: imageUpload,
+          });
+          values.villageHeadPhotoURL = imageUploadUrl;
+        } catch (error) {
+          toast.error(
+            "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
+          );
+          setLoadingSave(false);
+          return;
+        }
       }
 
       const { response, error } = await greetingsApi.saveGreeting({
@@ -106,40 +99,20 @@ export default function DashboardGreetingPage() {
           </SaveButton>
         </div>
 
-        <div className="flex gap-5">
-          <div className="w-1/2">
-            <Input
-              label="Nama Kepala Kelurahan"
-              placeholder="Masukkan nama kepala kelurahan..."
-              name="villageHeadName"
-              value={dataForm.values.villageHeadName}
-              onChange={dataForm.handleChange}
-              error={
-                dataForm.touched.villageHeadName &&
-                dataForm.errors.villageHeadName !== undefined
-              }
-              helperText={
-                dataForm.touched.villageHeadName &&
-                dataForm.errors.villageHeadName
-              }
-            />
-          </div>
-
-          <div className="w-1/2">
-            <UploadFileField
-              name="villageHeadPhoto"
-              label="Foto Kepala Kelurahan"
-              // onChange={(e) => {
-              //   setImageUpload(e.target.files[0]);
-              // }}
-            />
-          </div>
-        </div>
-
-        {/* <PreviewImage
-          image={data.villageHeadPhotoURL}
-          alt={data.villageHeadName}
-        /> */}
+        <Input
+          label="Nama Kepala Kelurahan"
+          placeholder="Masukkan nama kepala kelurahan..."
+          name="villageHeadName"
+          value={dataForm.values.villageHeadName}
+          onChange={dataForm.handleChange}
+          error={
+            dataForm.touched.villageHeadName &&
+            dataForm.errors.villageHeadName !== undefined
+          }
+          helperText={
+            dataForm.touched.villageHeadName && dataForm.errors.villageHeadName
+          }
+        />
 
         <div className="mt-4 overflow-x-auto">
           <TextEditor
@@ -147,7 +120,31 @@ export default function DashboardGreetingPage() {
             label="Isi Sambutan"
             content={textEditorContent}
             setContent={setTextEditorContent}
+            showPreview
           />
+        </div>
+
+        <div className="flex gap-5">
+          <div className="w-1/2">
+            <UploadFileField
+              name="villageHeadPhoto"
+              label="Foto Kepala Kelurahan"
+              onChange={(e) => {
+                setImageUpload(e.target.files[0]);
+              }}
+            />
+          </div>
+          <div className="w-1/2 mt-6">
+            <PreviewImage
+              image={
+                imageUpload && imageUpload instanceof File
+                  ? URL.createObjectURL(imageUpload)
+                  : dataForm.values.villageHeadPhotoURL
+              }
+              alt={dataForm.values.villageHeadName}
+              fullWidth
+            />
+          </div>
         </div>
       </div>
     </div>

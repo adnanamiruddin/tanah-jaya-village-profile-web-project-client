@@ -1,6 +1,7 @@
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
 import TextArea from "@/components/layouts/functions/TextArea";
+import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 
 export default function DashboardAddUmkmPage() {
@@ -85,17 +86,30 @@ export default function DashboardAddUmkmPage() {
           </div>
         </div>
 
-        <Input
-          label="Nomor Telepon"
-          placeholder="Masukkan nomor telepon..."
-          name="headOfFamily"
-          // value={addDataForm.values.villageHeadName}
-          // onChange={addDataForm.handleChange}
-          // error={
-          //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-          // }
-          // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-        />
+        <div className="flex gap-5">
+          <div className="w-1/2">
+            <Input
+              label="Nomor Telepon"
+              placeholder="Masukkan nomor telepon..."
+              name="headOfFamily"
+              // value={addDataForm.values.villageHeadName}
+              // onChange={addDataForm.handleChange}
+              // error={
+              //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
+              // }
+              // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
+            />
+          </div>
+          <div className="w-1/2">
+            <UploadFileField
+              name="umkmImage"
+              label="Foto Sampul UMKM"
+              // onChange={(e) => {
+              //   setImageUpload(e.target.files[0]);
+              // }}
+            />
+          </div>
+        </div>
 
         <TextArea
           rows={5}

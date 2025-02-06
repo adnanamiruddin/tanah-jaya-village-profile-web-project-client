@@ -11,98 +11,74 @@ import { useEffect, useState } from "react";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import { useRouter } from "next/router";
 import InputWithSelect from "@/components/layouts/functions/InputWithSelect";
-// import informationApi from "@/api/modules/information.api";
+import blogsApi from "@/api/modules/blogs.api";
 import { toast } from "react-toastify";
 import { formatDateToIndo } from "@/helpers/dateHelper";
 import { motion } from "framer-motion";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
+import he from "he";
 
 export default function DashboardAddNewsPage() {
   const router = useRouter();
   const { editBlogId, editBlogSlug } = router.query;
 
-  const [loading, setLoading] = useState(false);
+  const [imageUpload, setImageUpload] = useState("");
+  const [textEditorContent, setTextEditorContent] = useState("");
   //
-  const [imageUpload, setImageUpload] = useState(null);
-  const [content, setContent] = useState("");
+  const [loadingSave, setLoadingSave] = useState(false);
 
   const todayOnFormat = formatDateToIndo(new Date());
 
-  // const handleCreateBlog = async ({ values, content, imageUpload }) => {
-  //   const { response, error } = await informationApi.blog.createBlog({
-  //     title: values.title,
-  //     slug: values.slug,
-  //     status: parseInt(values.status),
-  //     author: values.author,
-  //     imageDesc: values.imageDesc,
-  //     content,
-  //   });
-  //   if (response) {
-  //     const uploadResult = await handleUploadBlogImage({
-  //       slug: values.slug,
-  //       image: imageUpload,
-  //     });
-  //     if (uploadResult.success) {
-  //       toast.success("Berita berhasil dibuat");
-  //       router.push("/dashboard/informasi/berita");
-  //     } else {
-  //       toast.error(uploadResult.errorMessage);
-  //     }
-  //   }
-  //   if (error) {
-  //     toast.error(error.message || "Gagal membuat berita");
-  //   }
-  // };
-  // //
-  // const handleUpdateBlog = async ({ values, content, imageUpload }) => {
-  //   const { response, error } = await informationApi.blog.updateBlog({
-  //     blogId: editBlogId,
-  //     title: values.title,
-  //     slug: values.slug,
-  //     status: parseInt(values.status),
-  //     author: values.author,
-  //     imageDesc: values.imageDesc,
-  //     content,
-  //   });
-  //   if (response) {
-  //     if (imageUpload && imageUpload instanceof File) {
-  //       const uploadResult = await handleUploadBlogImage({
-  //         slug: values.slug,
-  //         image: imageUpload,
-  //       });
-  //       if (uploadResult.success) {
-  //         toast.success("Berita berhasil diperbarui");
-  //         router.push("/dashboard/informasi/berita");
-  //       } else {
-  //         toast.error(uploadResult.errorMessage);
-  //       }
-  //     } else {
-  //       toast.success("Berita berhasil diperbarui");
-  //       router.push("/dashboard/informasi/berita");
-  //     }
-  //   }
-  //   if (error) {
-  //     toast.error(error.message || "Gagal memperbarui berita");
-  //   }
-  // };
-  // //
-  // const handleUploadBlogImage = async ({ slug, image }) => {
-  //   if (!image) return { success: true };
-  //   const { response } = await informationApi.blog.uploadBlogImage({
-  //     slug,
-  //     image,
-  //   });
-  //   if (response) return { success: true };
-  //   return { success: false, errorMessage: "Gagal mengunggah gambar" };
-  // };
+  const handleCreateBlog = async ({ values, content }) => {
+    const { response, error } = await blogsApi.createBlog({
+      type: "blog",
+      title: values.title,
+      slug: values.slug,
+      status: values.status,
+      author: values.author,
+      coverImageURL: values.coverImageURL,
+      coverDescription: values.coverDescription,
+      content,
+    });
+    if (response) {
+      toast.success("Berita berhasil dibuat");
+      router.push("/dashboard/berita");
+    }
+    if (error) {
+      toast.error(error.message || "Gagal membuat berita");
+    }
+  };
+  //
+  const handleUpdateBlog = async ({ values, content }) => {
+    const { response, error } = await blogsApi.editBlog({
+      blogId: editBlogId,
+      type: "blog",
+      title: values.title,
+      slug: values.slug,
+      status: values.status,
+      author: values.author,
+      coverImageURL: values.coverImageURL,
+      coverDescription: values.coverDescription,
+      content,
+    });
+    if (response) {
+      toast.success("Berita berhasil diperbarui");
+      router.push("/dashboard/berita");
+    }
+    if (error) {
+      toast.error(error.message || "Gagal memperbarui berita");
+    }
+  };
 
-  const addDataForm = useFormik({
+  const dataForm = useFormik({
     initialValues: {
       title: "",
       slug: "",
-      status: 0,
+      status: "draft",
       author: "",
-      imageDesc: "",
+      coverImageURL: "/image-home-hero.jpg",
+      coverDescription: "",
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -121,72 +97,88 @@ export default function DashboardAddNewsPage() {
           }
         ),
       slug: Yup.string().required("Slug harus diisi"),
-      status: Yup.number().required("Status harus diisi"),
+      status: Yup.string().required("Status harus diisi"),
       author: Yup.string().required("Penulis harus diisi"),
-      imageDesc: Yup.string().required("Deskripsi harus diisi"),
+      coverDescription: Yup.string().required("Deskripsi harus diisi"),
     }),
     onSubmit: async (values) => {
-      if (content === "") {
+      if (loadingSave) return;
+      if (textEditorContent === "") {
         toast.error("Konten berita tidak boleh kosong");
         return;
       }
-      if (loading) return;
-      setLoading(true);
+
+      setLoadingSave(true);
+      if (imageUpload) {
+        try {
+          const imageUploadUrl = await uploadImageToFirebaseStorage({
+            storageFolderName: "blog_images/cover",
+            image: imageUpload,
+          });
+          values.coverImageURL = imageUploadUrl;
+        } catch (error) {
+          toast.error(
+            "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
+          );
+          setLoadingSave(false);
+          return;
+        }
+      }
 
       try {
         if (!editBlogId && !editBlogSlug) {
           // CREATE MODE
-          await handleCreateBlog({ values, content, imageUpload });
+          await handleCreateBlog({
+            values,
+            content: textEditorContent,
+          });
         } else {
           // EDIT MODE
-          await handleUpdateBlog({ values, content, imageUpload });
+          await handleUpdateBlog({
+            values,
+            content: textEditorContent,
+            imageUpload,
+          });
         }
       } finally {
-        setLoading(false);
+        setLoadingSave(false);
       }
     },
   });
 
   // SLUG GENERATOR
   useEffect(() => {
-    const title = addDataForm.values.title;
+    const title = dataForm.values.title;
     const titleToSlug = title
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
-    addDataForm.setFieldValue("slug", titleToSlug);
-  }, [addDataForm.values.title]);
+    dataForm.setFieldValue("slug", titleToSlug);
+  }, [dataForm.values.title]);
 
   // EDIT MODE
-  const fetchInformationData = async () => {
-    const { response, error } = await informationApi.blog.getBlogBySlug({
+  const fetchExistingData = async () => {
+    const { response, error } = await blogsApi.getBlogBySlug({
       slug: editBlogSlug,
     });
-    const existingBlog = response?.data;
     if (response) {
-      addDataForm.setValues({
-        title: existingBlog.artiTitle,
-        slug: existingBlog.artiSlug,
-        status: parseInt(
-          existingBlog.artiStatus === "draft"
-            ? 0
-            : existingBlog.artiStatus === "publish"
-            ? 1
-            : 2
-        ),
-        author: existingBlog.artiPenulis,
-        imageDesc: existingBlog.artiImageDesc,
+      dataForm.setValues({
+        title: response.title,
+        slug: response.slug,
+        status: response.status,
+        author: response.author,
+        coverImageURL: response.coverImageURL,
+        coverDescription: response.coverDescription,
       });
-      setImageUpload(existingBlog.artiImage);
-      setContent(existingBlog.artiContent);
+      setTextEditorContent(response.content);
     }
     if (error) {
-      toast.error("Gagal memuat berita");
+      toast.error(error.message);
     }
   };
   //
   useEffect(() => {
-    if (editBlogId && editBlogSlug) fetchInformationData();
+    if (editBlogId && editBlogSlug) fetchExistingData();
   }, [editBlogId, editBlogSlug]);
 
   const [previewVisible, setPreviewVisible] = useState(true);
@@ -205,8 +197,10 @@ export default function DashboardAddNewsPage() {
           {/*  */}
           <SaveButton
             name="saveBlogButton"
-            onClick={addDataForm.handleSubmit}
-            disabled={loading}
+            onClick={() => {
+              dataForm.handleSubmit();
+            }}
+            disabled={loadingSave}
           >
             Simpan
           </SaveButton>
@@ -224,15 +218,12 @@ export default function DashboardAddNewsPage() {
                 label="Judul"
                 placeholder="Masukkan judul berita..."
                 name="title"
-                value={addDataForm.values.title}
-                onChange={addDataForm.handleChange}
+                value={dataForm.values.title}
+                onChange={dataForm.handleChange}
                 error={
-                  addDataForm.touched.title &&
-                  addDataForm.errors.title !== undefined
+                  dataForm.touched.title && dataForm.errors.title !== undefined
                 }
-                helperText={
-                  addDataForm.touched.title && addDataForm.errors.title
-                }
+                helperText={dataForm.touched.title && dataForm.errors.title}
               />
 
               <Input
@@ -241,33 +232,30 @@ export default function DashboardAddNewsPage() {
                 label="Slug (URL Berita)"
                 placeholder="Masukkan judul berita di atas..."
                 name="slug"
-                value={addDataForm.values.slug}
-                onChange={addDataForm.handleChange}
+                value={dataForm.values.slug}
+                onChange={dataForm.handleChange}
                 error={
-                  addDataForm.touched.slug &&
-                  addDataForm.errors.slug !== undefined
+                  dataForm.touched.slug && dataForm.errors.slug !== undefined
                 }
-                helperText={addDataForm.touched.slug && addDataForm.errors.slug}
+                helperText={dataForm.touched.slug && dataForm.errors.slug}
               />
 
               <InputWithSelect
                 label="Status"
                 placeholder="Pilih status berita"
                 options={[
-                  { name: "Publish", value: 1 },
-                  { name: "Draft", value: 0 },
+                  { name: "Publish", value: "published" },
+                  { name: "Draft", value: "draft" },
                   // { name: "Archive", value: 2 },
                 ]}
                 name="status"
-                value={addDataForm.values.status}
-                onChange={addDataForm.handleChange}
+                value={dataForm.values.status}
+                onChange={dataForm.handleChange}
                 error={
-                  addDataForm.touched.status &&
-                  addDataForm.errors.status !== undefined
+                  dataForm.touched.status &&
+                  dataForm.errors.status !== undefined
                 }
-                helperText={
-                  addDataForm.touched.status && addDataForm.errors.status
-                }
+                helperText={dataForm.touched.status && dataForm.errors.status}
               />
 
               <Input
@@ -275,15 +263,13 @@ export default function DashboardAddNewsPage() {
                 label="Penulis"
                 placeholder="Masukkan penulis..."
                 name="author"
-                value={addDataForm.values.author}
-                onChange={addDataForm.handleChange}
+                value={dataForm.values.author}
+                onChange={dataForm.handleChange}
                 error={
-                  addDataForm.touched.author &&
-                  addDataForm.errors.author !== undefined
+                  dataForm.touched.author &&
+                  dataForm.errors.author !== undefined
                 }
-                helperText={
-                  addDataForm.touched.author && addDataForm.errors.author
-                }
+                helperText={dataForm.touched.author && dataForm.errors.author}
               />
 
               <UploadFileField
@@ -300,23 +286,24 @@ export default function DashboardAddNewsPage() {
                 rows={3}
                 label="Deskripsi Sampul"
                 placeholder="Masukkan deskripsi sampul..."
-                name="imageDesc"
-                value={addDataForm.values.imageDesc}
-                onChange={addDataForm.handleChange}
+                name="coverDescription"
+                value={dataForm.values.coverDescription}
+                onChange={dataForm.handleChange}
                 error={
-                  addDataForm.touched.imageDesc &&
-                  addDataForm.errors.imageDesc !== undefined
+                  dataForm.touched.coverDescription &&
+                  dataForm.errors.coverDescription !== undefined
                 }
                 helperText={
-                  addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
+                  dataForm.touched.coverDescription &&
+                  dataForm.errors.coverDescription
                 }
               />
 
               <TextEditor
                 id="blogTextEditor"
                 label="Konten"
-                content={content}
-                setContent={setContent}
+                content={textEditorContent}
+                setContent={setTextEditorContent}
               />
             </div>
 
@@ -352,9 +339,9 @@ export default function DashboardAddNewsPage() {
               >
                 <div className="border-t border-l border-gray-400 bg-gray-100 p-2 pt-1">
                   <HeaderDetailPage
-                    title={addDataForm.values.title || "Judul Berita"}
+                    title={dataForm.values.title || "Judul Berita"}
                     description={`${todayOnFormat}. Ditulis oleh ${
-                      addDataForm.values.author || "Penulis"
+                      dataForm.values.author || "Penulis"
                     }`}
                   />
 
@@ -363,9 +350,7 @@ export default function DashboardAddNewsPage() {
                       src={
                         imageUpload && imageUpload instanceof File
                           ? URL.createObjectURL(imageUpload)
-                          : imageUpload
-                          ? imageUpload
-                          : "/informasi/information-placeholder.png"
+                          : dataForm.values.coverImageURL
                       }
                       alt="Sampul"
                       width={500}
@@ -376,16 +361,18 @@ export default function DashboardAddNewsPage() {
 
                   <div className="mt-2 bg-white rounded py-2 px-3">
                     <p className="text-[#A0A0A0] text-sm">
-                      {addDataForm.values.imageDesc || "Deskripsi Sampul"}
+                      {dataForm.values.coverDescription || "Deskripsi Sampul"}
                     </p>
                   </div>
 
                   <div className="text-sm text-justify break-words whitespace-normal">
                     <div className="mt-2 bg-white rounded py-2 px-3">
-                      {content !== "" ? (
+                      {textEditorContent !== "" ? (
                         <div
                           className="sanitized-content"
-                          dangerouslySetInnerHTML={{ __html: content }}
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(textEditorContent),
+                          }}
                         ></div>
                       ) : (
                         "Konten berita..."
