@@ -52,7 +52,7 @@ export default function DisasterMitigationPage() {
               alt="Peta Mitigasi Bencana Tanah Jaya"
               width={500}
               height={500}
-              className="w-full h-full object-cover rounded md:w-[70%] md:h-[32rem] md:mx-auto"
+              className="w-full h-full object-contain rounded md:w-[70%] md:h-[32rem] md:mx-auto"
             />
           </div>
 
