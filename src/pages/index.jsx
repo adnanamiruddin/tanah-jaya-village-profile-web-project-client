@@ -47,12 +47,12 @@ export default function HomePage() {
   const [errorDataLoaded, setErrorDataLoaded] = useState(false);
 
   const [greetingData, setGreetingData] = useState(null);
-  const [sotksData, setSotksData] = useState(null);
+  const [sotksData, setSotksData] = useState([]);
   const [infograpichsData, setInfograpichsData] = useState(null);
-  const [umkmsData, setUmkmData] = useState(null);
+  const [umkmsData, setUmkmData] = useState([]);
   const [galleryData, setGalleryData] = useState(null);
-  const [schedulesData, setSchedulesData] = useState(null);
-  const [blogsData, setBlogsData] = useState(null);
+  const [schedulesData, setSchedulesData] = useState([]);
+  const [blogsData, setBlogsData] = useState([]);
 
   const fetchGreetingData = async () => {
     const { response, error } = await greetingsApi.getGreeting();

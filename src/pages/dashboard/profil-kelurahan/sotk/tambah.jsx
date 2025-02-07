@@ -178,7 +178,7 @@ export default function DashboardAddUmkmPage() {
       <div className="px-10 pb-16 h-full">
         <div className="pt-4 flex justify-between items-center border-b border-gray-400 pb-4">
           <h2 className="font-bold text-2xl">
-            Form Usaha Mikro Kecil Menangah (UMKM)
+            Form Struktur Organisasi dan Tata Kerja
           </h2>
           {/*  */}
           <SaveButton
@@ -228,77 +228,25 @@ export default function DashboardAddUmkmPage() {
 
         <div className="flex gap-5">
           <div className="w-1/2">
-            <Input
-              label="Kisaran Harga (Mulai)"
-              placeholder="Masukkan kisaran harga..."
-              type="number"
-              name="priceRangeStart"
-              value={dataForm.values.priceRangeStart}
-              onChange={dataForm.handleChange}
-              error={
-                dataForm.touched.priceRangeStart &&
-                dataForm.errors.priceRangeStart !== undefined
-              }
-              helperText={
-                dataForm.touched.priceRangeStart &&
-                dataForm.errors.priceRangeStart
-              }
+            <UploadFileField
+              name="villageHeadPhoto"
+              label="Foto Kepala Kelurahan"
+              onChange={(e) => {
+                setImageUpload(e.target.files[0]);
+              }}
             />
           </div>
-          {/*  */}
           <div className="w-1/2">
-            <Input
-              label="Kisaran Harga (Sampai)"
-              placeholder="Masukkan kisaran harga..."
-              type="number"
-              name="priceRangeEnd"
-              value={dataForm.values.priceRangeEnd}
-              onChange={dataForm.handleChange}
-              error={
-                dataForm.touched.priceRangeEnd &&
-                dataForm.errors.priceRangeEnd !== undefined
+            <PreviewImage
+              image={
+                imageUpload && imageUpload instanceof File
+                  ? URL.createObjectURL(imageUpload)
+                  : imageUpload
               }
-              helperText={
-                dataForm.touched.priceRangeEnd && dataForm.errors.priceRangeEnd
-              }
+              alt={dataForm.values.villageHeadName}
+              fullWidth
             />
           </div>
-        </div>
-
-        <TextArea
-          rows={5}
-          label="Deskripsi"
-          placeholder="Masukkan deskripsi..."
-          name="description"
-          value={dataForm.values.description}
-          onChange={dataForm.handleChange}
-          error={
-            dataForm.touched.description &&
-            dataForm.errors.description !== undefined
-          }
-          helperText={
-            dataForm.touched.description && dataForm.errors.description
-          }
-        />
-
-        <div className="w-full">
-          <UploadFileField
-            name="umkmImage"
-            label="Foto Sampul UMKM"
-            onChange={(e) => {
-              setImageUpload(e.target.files[0]);
-            }}
-          />
-          {/*  */}
-          <PreviewImage
-            image={
-              imageUpload && imageUpload instanceof File
-                ? URL.createObjectURL(imageUpload)
-                : imageUpload
-            }
-            alt="Sampul"
-            fullWidth
-          />
         </div>
       </div>
     </div>
