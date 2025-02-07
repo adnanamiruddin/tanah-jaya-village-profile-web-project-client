@@ -21,7 +21,6 @@ html {
     all: revert;
     font-weight: normal;
   }
-
   /* Alignment Styles */
   div.sanitized-content .ql-align-right {
     text-align: right;

@@ -11,6 +11,7 @@ import Loading from "@/components/layouts/globals/Loading";
 import blogsApi from "@/api/modules/blogs.api";
 import { toast } from "react-toastify";
 import { formatDateToIndo } from "@/helpers/dateHelper";
+import DeleteNewsModal from "@/components/layouts/modals/DeleteNewsModal";
 
 export default function DashboardNewsPage() {
   const router = useRouter();
@@ -19,8 +20,7 @@ export default function DashboardNewsPage() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [errorDataLoaded, setErrorDataLoaded] = useState(false);
   //
-  const [selectedInformationIdToDelete, setSelectedInformationIdToDelete] =
-    useState(null);
+  const [selectedNewsIdToDelete, setSelectedNewsIdToDelete] = useState(null);
 
   const fetchNewsData = async () => {
     const { response, error } = await blogsApi.getAllBlogs({});
@@ -109,7 +109,7 @@ export default function DashboardNewsPage() {
                           onClick={() => {
                             setSelectedNewsIdToDelete(news.id);
                             document
-                              .getElementById("delete_news_modal")
+                              .getElementById("DeleteNewsModal")
                               .showModal();
                           }}
                         >
@@ -129,11 +129,11 @@ export default function DashboardNewsPage() {
         <Loading />
       )}
 
-      {/* <DeleteInformationModal
-        informationId={selectedInformationIdToDelete}
-        setInformationId={setSelectedInformationIdToDelete}
+      <DeleteNewsModal
+        newsId={selectedNewsIdToDelete}
+        setNewsId={setSelectedNewsIdToDelete}
         fetchNewsData={fetchNewsData}
-      /> */}
+      />
     </div>
   );
 }

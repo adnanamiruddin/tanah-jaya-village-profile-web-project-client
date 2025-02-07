@@ -209,7 +209,7 @@ export default function HomePage() {
               />
             </div>
 
-            <div>
+            <div className="md:w-[60%]">
               <h1 className="text-2xl font-bold text-center mb-4 text-sky-700 md:text-4xl md:text-start">
                 SAMBUTAN KEPALA KELURAHAN
               </h1>

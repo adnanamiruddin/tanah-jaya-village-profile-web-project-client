@@ -56,7 +56,7 @@ export default function MainLayout({ children }) {
 
       {/* Config React Toastify START */}
       <ToastContainer
-        position="top-center"
+        position="bottom-left"
         autoClose={4000}
         z-index="9999"
         theme="light"
