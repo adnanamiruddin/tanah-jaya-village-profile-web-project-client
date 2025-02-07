@@ -22,6 +22,7 @@ import infographicsApi from "@/api/modules/infographics.api";
 import blogsApi from "@/api/modules/blogs.api";
 import he from "he";
 import { formatDateToIndo } from "@/helpers/dateHelper";
+import umkmsApi from "@/api/modules/umkm.api";
 
 const HomeMapLocation = dynamic(
   () => import("@/components/layouts/HomeMapLocation"),
@@ -91,15 +92,15 @@ export default function HomePage() {
   };
   //
   const fetchUmkmsData = async () => {
-    fetchGalleryData();
-    // const { response, error } = await infographicsApi.getInfographic();
-    // if (response) {
-    //   setInfograpichsData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await umkmsApi.getAllUmkms();
+    if (response) {
+      setUmkmData(response);
+      fetchGalleryData();
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   const fetchGalleryData = async () => {
@@ -388,31 +389,19 @@ export default function HomePage() {
             </p>
 
             <div className="flex gap-4 overflow-auto">
-              <UmkmItem
-                image="/image-sample-umkm.jpg"
-                name="Kedai Papai"
-                slug="kedai-papai"
-                price="Rp. 10.000 - Rp.100.000"
-              />
-
-              <UmkmItem
-                image="/image-sample-umkm.jpg"
-                name="Kedai Papai"
-                slug="kedai-papai"
-                price="Rp. 10.000 - Rp.100.000"
-              />
-              <UmkmItem
-                image="/image-sample-umkm.jpg"
-                name="Kedai Papai"
-                slug="kedai-papai"
-                price="Rp. 10.000 - Rp.100.000"
-              />
-              <UmkmItem
-                image="/image-sample-umkm.jpg"
-                name="Kedai Papai"
-                slug="kedai-papai"
-                price="Rp. 10.000 - Rp.100.000"
-              />
+              {umkmsData.map((umkm, i) => (
+                <UmkmItem
+                  key={i}
+                  image={
+                    umkm.imageURL !== ""
+                      ? umkm.imageURL
+                      : "/image-home-hero.jpg"
+                  }
+                  name={umkm.name}
+                  slug={umkm.slug}
+                  price={umkm.priceRange}
+                />
+              ))}
             </div>
 
             <HrefGradientButton href="/umkm">

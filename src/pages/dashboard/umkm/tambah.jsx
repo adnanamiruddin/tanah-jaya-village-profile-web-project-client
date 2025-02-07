@@ -68,7 +68,7 @@ export default function DashboardAddUmkmPage() {
       priceRangeEnd: 0,
       description: "",
       whatsappNumber: "",
-      imageURL: "",
+      imageURL: "/image-home-hero.jpg",
     },
     validationSchema: Yup.object({
       name: Yup.string()
