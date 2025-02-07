@@ -31,6 +31,24 @@ html {
   div.sanitized-content .ql-align-justify {
     text-align: justify;
   }
+
+  /* Quill Font Styles */
+  div.sanitized-content .ql-font-serif {
+    font-family: serif;
+  }
+  div.sanitized-content .ql-font-monospace {
+    font-family: monospace;
+  }
+  div.sanitized-content .ql-font-sans {
+    font-family: sans-serif;
+  }
+  /* Custom Fonts */
+  div.sanitized-content .ql-font-poppins {
+    font-family: "Poppins", sans-serif;
+  }
+  div.sanitized-content .ql-font-roboto {
+    font-family: "Roboto", sans-serif;
+  }
 }
 
 .scrollbar-none::-webkit-scrollbar {

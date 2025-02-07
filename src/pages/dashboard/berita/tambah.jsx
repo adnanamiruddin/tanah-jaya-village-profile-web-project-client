@@ -304,6 +304,7 @@ export default function DashboardAddNewsPage() {
                 label="Konten"
                 content={textEditorContent}
                 setContent={setTextEditorContent}
+                uploadImage
               />
             </div>
 
