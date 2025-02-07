@@ -1,7 +1,5 @@
-import umkmsApi from "@/api/modules/umkm.api";
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
-import TextArea from "@/components/layouts/functions/TextArea";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 import PreviewImage from "@/components/layouts/PreviewImage";
@@ -12,17 +10,17 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-export default function DashboardAddUmkmPage() {
+export default function DashboardAddSotkPage() {
   const router = useRouter();
-  const { editUmkmId, editUmkmSlug } = router.query;
+  const { editSotkId, editSotkSlug } = router.query;
 
   const [imageUpload, setImageUpload] = useState("/image-home-hero.jpg");
   // const [textEditorContent, setTextEditorContent] = useState("");
   //
   const [loadingSave, setLoadingSave] = useState(false);
 
-  const handleCreateUmkm = async ({ values }) => {
-    const { response, error } = await umkmsApi.createUmkm({
+  const handleCreateSotk = async ({ values }) => {
+    const { response, error } = await sotksApi.createSotk({
       name: values.name,
       slug: values.slug,
       priceRange: `Rp. ${values.priceRangeStart} - Rp. ${values.priceRangeEnd}`,
@@ -31,18 +29,18 @@ export default function DashboardAddUmkmPage() {
       imageURL: values.imageURL,
     });
     if (response) {
-      toast.success("Data UMKM berhasil dibuat");
-      router.push("/dashboard/umkm");
+      toast.success("Data SOTK berhasil dibuat");
+      router.push("/dashboard/sotk");
     }
     if (error) {
-      toast.error(error.message || "Gagal membuat data UMKM");
+      toast.error(error.message || "Gagal membuat data SOTK");
     }
   };
   //
-  const handleUpdateUmkm = async ({ values, content }) => {
-    const { response, error } = await umkmsApi.editUmkm({
-      umkmId: editUmkmId,
-      type: "umkm",
+  const handleUpdateSotk = async ({ values, content }) => {
+    const { response, error } = await sotksApi.editSotk({
+      sotkId: editSotkId,
+      type: "sotk",
       title: values.title,
       slug: values.slug,
       status: values.status,
@@ -52,11 +50,11 @@ export default function DashboardAddUmkmPage() {
       content,
     });
     if (response) {
-      toast.success("Data UMKM berhasil diperbarui");
-      router.push("/dashboard/umkm");
+      toast.success("Data SOTK berhasil diperbarui");
+      router.push("/dashboard/sotk");
     }
     if (error) {
-      toast.error(error.message || "Gagal memperbarui data UMKM");
+      toast.error(error.message || "Gagal memperbarui data SOTK");
     }
   };
 
@@ -88,7 +86,7 @@ export default function DashboardAddUmkmPage() {
       slug: Yup.string().required("Slug harus diisi"),
       priceRangeStart: Yup.number().required("Rentang harga mulai harus diisi"),
       priceRangeEnd: Yup.number().required("Rentang harga akhir harus diisi"),
-      description: Yup.string().required("Deskripsi UMKM harus diisi"),
+      description: Yup.string().required("Deskripsi SOTK harus diisi"),
       whatsappNumber: Yup.string().required(
         "Nomor telepon penjual harus diisi"
       ),
@@ -96,7 +94,7 @@ export default function DashboardAddUmkmPage() {
     onSubmit: async (values) => {
       if (loadingSave) return;
       // if (textEditorContent === "") {
-      //   toast.error("Konten umkm tidak boleh kosong");
+      //   toast.error("Konten sotk tidak boleh kosong");
       //   return;
       // }
 
@@ -104,7 +102,7 @@ export default function DashboardAddUmkmPage() {
       if (imageUpload) {
         try {
           const imageUploadUrl = await uploadImageToFirebaseStorage({
-            storageFolderName: "umkm_images/cover",
+            storageFolderName: "sotk_images/cover",
             image: imageUpload,
           });
           values.coverImageURL = imageUploadUrl;
@@ -118,14 +116,14 @@ export default function DashboardAddUmkmPage() {
       }
 
       try {
-        if (!editUmkmId && !editUmkmSlug) {
+        if (!editSotkId && !editSotkSlug) {
           // CREATE MODE
-          await handleCreateUmkm({
+          await handleCreateSotk({
             values,
           });
         } else {
           // EDIT MODE
-          await handleUpdateUmkm({
+          await handleUpdateSotk({
             values,
             content: textEditorContent,
             imageUpload,
@@ -149,8 +147,8 @@ export default function DashboardAddUmkmPage() {
 
   // EDIT MODE
   const fetchExistingData = async () => {
-    const { response, error } = await umkmsApi.getUmkmBySlug({
-      slug: editUmkmSlug,
+    const { response, error } = await sotksApi.getSotkBySlug({
+      slug: editSotkSlug,
     });
     if (response) {
       dataForm.setValues({
@@ -168,12 +166,12 @@ export default function DashboardAddUmkmPage() {
   };
   //
   useEffect(() => {
-    if (editUmkmId && editUmkmSlug) fetchExistingData();
-  }, [editUmkmId, editUmkmSlug]);
+    if (editSotkId && editSotkSlug) fetchExistingData();
+  }, [editSotkId, editSotkSlug]);
 
   return (
     <div className="h-full overflow-hidden">
-      <DashboardHeader>UMKM</DashboardHeader>
+      <DashboardHeader>SOTK</DashboardHeader>
 
       <div className="px-10 pb-16 h-full">
         <div className="pt-4 flex justify-between items-center border-b border-gray-400 pb-4">
@@ -195,8 +193,8 @@ export default function DashboardAddUmkmPage() {
         <div className="flex gap-5">
           <div className="w-1/2">
             <Input
-              label="Nama UMKM"
-              placeholder="Masukkan nama UMKM..."
+              label="Nama Pegawai"
+              placeholder="Masukkan nama pegawai..."
               name="name"
               value={dataForm.values.name}
               onChange={dataForm.handleChange}
@@ -209,8 +207,8 @@ export default function DashboardAddUmkmPage() {
           {/*  */}
           <div className="w-1/2">
             <Input
-              label="Nomor Telepon"
-              placeholder="Masukkan nomor telepon..."
+              label="Jabatan"
+              placeholder="Masukkan jabatan..."
               name="whatsappNumber"
               value={dataForm.values.whatsappNumber}
               onChange={dataForm.handleChange}
@@ -230,7 +228,7 @@ export default function DashboardAddUmkmPage() {
           <div className="w-1/2">
             <UploadFileField
               name="villageHeadPhoto"
-              label="Foto Kepala Kelurahan"
+              label="Foto Pegawai"
               onChange={(e) => {
                 setImageUpload(e.target.files[0]);
               }}
