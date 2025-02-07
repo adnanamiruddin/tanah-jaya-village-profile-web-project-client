@@ -65,7 +65,7 @@ export default function NewsDetailPage() {
       ) : isDataLoaded ? (
         <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
           <div className="-m-2 -mt-4 md:flex md:items-start md:gap-3">
-            <div className="w-full md:w-[75%]">
+            <div className="w-full md:w-[70%]">
               <HeaderDetailPage title={blogData.title} />
 
               <div className="mt-2 bg-white rounded py-2 px-3 text-sm">
@@ -126,7 +126,7 @@ export default function NewsDetailPage() {
             </div>
 
             {/* BERITA LAINNYA */}
-            <div className="hidden md:inline md:w-[25%] md:mt-2">
+            <div className="hidden md:inline md:w-[30%] md:mt-2">
               <div className="bg-white rounded py-4">
                 <p className="font-semibold text-center text-3xl">
                   BERITA LAINNYA
