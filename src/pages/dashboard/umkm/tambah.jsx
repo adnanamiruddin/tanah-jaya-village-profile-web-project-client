@@ -107,7 +107,7 @@ export default function DashboardAddUmkmPage() {
             storageFolderName: "umkm_images/cover",
             image: imageUpload,
           });
-          values.coverImageURL = imageUploadUrl;
+          values.imageURL = imageUploadUrl;
         } catch (error) {
           toast.error(
             "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
