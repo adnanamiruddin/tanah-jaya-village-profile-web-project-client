@@ -32,7 +32,7 @@ export default function DashboardNewsPage() {
     }
     if (error) {
       setErrorDataLoaded(true);
-      toast.error("Gagal memuat data");
+      toast.error(error.message);
     }
   };
   //

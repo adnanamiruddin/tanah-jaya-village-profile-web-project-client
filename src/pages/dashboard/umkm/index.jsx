@@ -13,50 +13,33 @@ import { toast } from "react-toastify";
 // import Pagination from "@/components/layouts/functions/Pagination";
 // import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
 import { formatDateToIndo } from "@/helpers/dateHelper";
+import umkmsApi from "@/api/modules/umkm.api";
 
 export default function DashboardUmkmPage() {
   const router = useRouter();
 
-  const [umkm, setUmkm] = useState([]);
+  const [umkms, setUmkms] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [errorDataLoaded, setErrorDataLoaded] = useState(false);
   //
-  const [selectedInformationIdToDelete, setSelectedInformationIdToDelete] =
-    useState(null);
+  const [selectedUmkmIdToDelete, setSelectedUmkmIdToDelete] = useState(null);
 
-  const fetchUmkmData = async () => {
-    setUmkm([
-      {
-        id: 1,
-        name: "UMKM 1",
-        priceRange: "Rp. 10.000 - Rp. 100.000",
-      },
-      {
-        id: 2,
-        name: "UMKM 2",
-        priceRange: "Rp. 50.000 - Rp. 200.000",
-      },
-    ]);
-    setIsDataLoaded(true);
-
-    // const { response, error } = await informationApi.blog.getAllBlogs({
-    //   page,
-    // });
-    // if (response) {
-    //   setUmkm(response.data);
-    //   setTotalPage(response.pagination.lastPage);
-    //   setTimeout(() => {
-    //     setIsDataLoaded(true);
-    //   }, 1000);
-    // }
-    // if (error) {
-    //   setErrorDataLoaded(true);
-    //   toast.error("Gagal memuat data");
-    // }
+  const fetchUmkmsData = async () => {
+    const { response, error } = await umkmsApi.getAllUmkms();
+    if (response) {
+      setUmkms(response);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 1000);
+    }
+    if (error) {
+      setErrorDataLoaded(true);
+      toast.error(error.message);
+    }
   };
   //
   useEffect(() => {
-    fetchUmkmData();
+    fetchUmkmsData();
   }, []);
 
   return (
@@ -84,28 +67,28 @@ export default function DashboardUmkmPage() {
               <thead>
                 <tr className="w-full text-black flex items-center gap-2 py-3 px-1 border-b-2 border-gray-300 text-lg">
                   <th className="w-[5%] text-start">No</th>
-                  <th className="w-[40%] text-start">Nama Usaha</th>
-                  <th className="w-[35%] text-start">Kisaran Harga</th>
+                  <th className="w-[45%] text-start">Nama Usaha</th>
+                  <th className="w-[30%] text-start">Kisaran Harga</th>
                   <th className="w-[20%] text-start">Aksi</th>
                 </tr>
               </thead>
-              {umkm?.length > 0 ? (
+              {umkms?.length > 0 ? (
                 <tbody>
-                  {umkm.map((umkm, i) => (
+                  {umkms.map((umkm, i) => (
                     <tr
                       key={i}
                       className="text-black flex items-center gap-2 py-5 px-1 border-b-2 border-gray-300"
                     >
                       <td className="w-[5%] text-start ps-2">{i + 1}</td>
-                      <td className="w-[40%] text-start break-words">
+                      <td className="w-[45%] text-start break-words">
                         {umkm.name}
                       </td>
-                      <td className="w-[35%] text-start">{umkm.priceRange}</td>
+                      <td className="w-[30%] text-start">{umkm.priceRange}</td>
                       <td className="w-[20%] text-start flex items-center gap-2">
                         <EditButton
                           onClick={() =>
                             router.push(
-                              `/dashboard/umkm/tambah?editUmkmId=${umkm.id}`
+                              `/dashboard/umkm/tambah?editUmkmId=${umkm.id}&editUmkmSlug=${umkm.slug}`
                             )
                           }
                         >
@@ -127,7 +110,7 @@ export default function DashboardUmkmPage() {
                   ))}
                 </tbody>
               ) : (
-                <NotFound message="Tidak ada data agenda acara" />
+                <NotFound message="Tidak ada data UMKM" />
               )}
             </table>
           </div>
