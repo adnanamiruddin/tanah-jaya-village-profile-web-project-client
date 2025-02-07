@@ -31,7 +31,7 @@ export default function TextEditor({
       ["clean"],
     ],
     clipboard: {
-      matchVisual: false,
+      matchVisual: true,
     },
   };
 
@@ -66,6 +66,7 @@ export default function TextEditor({
             "underline",
             "strike",
             "blockquote",
+            "align",
             "list",
             "bullet",
             "indent",

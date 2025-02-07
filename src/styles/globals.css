@@ -17,10 +17,20 @@ html {
   div.sanitized-content p,
   div.sanitized-content ul,
   div.sanitized-content ol,
-  div.sanitized-content li,
-  div.sanitized-content blockquote {
+  div.sanitized-content li {
     all: revert;
     font-weight: normal;
+  }
+
+  /* Alignment Styles */
+  div.sanitized-content .ql-align-right {
+    text-align: right;
+  }
+  div.sanitized-content .ql-align-center {
+    text-align: center;
+  }
+  div.sanitized-content .ql-align-justify {
+    text-align: justify;
   }
 }
 
