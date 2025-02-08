@@ -78,20 +78,17 @@ export default function VillageProfilePage() {
             <div className="max-w-4xl mx-auto">
               {/* Video Container */}
               <div className="mt-4 rounded-xl overflow-hidden shadow-2xl hover:shadow-3xl transition duration-300 transform hover:scale-[1.01]">
-                <video
-                  className="w-full aspect-video object-cover"
-                  loop
-                  playsInline
-                  controls
-                  autoPlay
-                  // poster="/image-home-hero.jpg"
-                >
-                  <source
-                    src={process.env.NEXT_PUBLIC_VILLAGE_PROFILE_VIDEO_URL}
-                    type="video/mp4"
-                  />
-                  Browser Anda tidak mendukung pemutaran video.
-                </video>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  className="aspect-video object-cover"
+                  src="https://www.youtube.com/embed/LjJyEgr0zKg?si=o0EEybSQKrdmkCjs&autoplay=1&loop=1"
+                  title="Video Profil Kelurahan Tanah Jaya"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen
+                ></iframe>
               </div>
 
               {/* Video Description */}

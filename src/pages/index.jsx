@@ -199,14 +199,15 @@ export default function HomePage() {
           </div>
 
           {/* SAMBUTAN */}
-          <div className="mt-10 md:mt-24 md:flex md:gap-10">
-            <div className="hidden md:block md:w-[40%]">
+          <div className="mt-10 md:mt-24 md:flex md:justify-center md:gap-10">
+            {/* DESKTOP VIEW */}
+            <div className="hidden md:inline">
               <Image
                 src={greetingData.villageHeadPhotoURL || "/icon-man.png"}
                 alt={greetingData.villageHeadName}
-                width={200}
-                height={200}
-                className=" w-full rounded-full"
+                width={500}
+                height={500}
+                className=" w-96 h-96 rounded-full object-cover"
               />
             </div>
 
@@ -216,13 +217,14 @@ export default function HomePage() {
               </h1>
 
               <div className="flex flex-col gap-6">
+                {/* MOBILE VIEW */}
                 <div className="flex flex-col items-center md:items-start">
                   <Image
                     src={greetingData.villageHeadPhotoURL || "/icon-man.png"}
                     alt={greetingData.villageHeadName}
-                    width={200}
-                    height={200}
-                    className="w-48 h-48 rounded-full md:hidden"
+                    width={500}
+                    height={500}
+                    className="w-48 h-48 rounded-full object-cover md:hidden"
                   />
                   <h2 className="text-2xl font-bold mt-4 md:mt-0">
                     {greetingData.villageHeadName}
@@ -419,48 +421,48 @@ export default function HomePage() {
             </p>
 
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
               <div className="col-span-2 md:col-span-1">
                 <ImageHoverEffect
                   src="/image-home-hero.jpg"
                   title="Taman Karaeng Bapa"
+                  description="Foto Tanah Jaya"
                 />
               </div>
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+                description="Foto Tanah Jaya"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+                description="Foto Tanah Jaya"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+                description="Foto Tanah Jaya"
+              />
+              <ImageHoverEffect
+                src="/image-home-hero.jpg"
+                title="Taman Karaeng Bapa"
+              />
             </div>
           </div>
 
