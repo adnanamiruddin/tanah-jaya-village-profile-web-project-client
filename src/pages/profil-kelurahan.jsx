@@ -86,7 +86,10 @@ export default function VillageProfilePage() {
                   autoPlay
                   // poster="/image-home-hero.jpg"
                 >
-                  <source src="/video-village-profile.mp4" type="video/mp4" />
+                  <source
+                    src={process.env.NEXT_PUBLIC_VILLAGE_PROFILE_VIDEO_URL}
+                    type="video/mp4"
+                  />
                   Browser Anda tidak mendukung pemutaran video.
                 </video>
               </div>

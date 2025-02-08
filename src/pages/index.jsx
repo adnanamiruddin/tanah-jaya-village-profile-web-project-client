@@ -66,7 +66,6 @@ export default function HomePage() {
       setErrorDataLoaded(true);
     }
   };
-  
   //
   const fetchSotksData = async () => {
     fetchInfographicsData();
