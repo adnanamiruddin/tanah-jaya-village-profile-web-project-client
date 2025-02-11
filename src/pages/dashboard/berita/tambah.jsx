@@ -30,7 +30,7 @@ export default function DashboardAddNewsPage() {
 
   const todayOnFormat = formatDateToIndo(new Date());
 
-  const handleCreateBlog = async ({ values, content }) => {
+  const handleCreateBlog = async ({ values }) => {
     const { response, error } = await blogsApi.createBlog({
       type: "blog",
       title: values.title,
@@ -39,7 +39,7 @@ export default function DashboardAddNewsPage() {
       author: values.author,
       coverImageURL: values.coverImageURL,
       coverDescription: values.coverDescription,
-      content,
+      content: textEditorContent,
     });
     if (response) {
       toast.success("Berita berhasil dibuat");
@@ -50,7 +50,7 @@ export default function DashboardAddNewsPage() {
     }
   };
   //
-  const handleUpdateBlog = async ({ values, content }) => {
+  const handleUpdateBlog = async ({ values }) => {
     const { response, error } = await blogsApi.editBlog({
       blogId: editBlogId,
       type: "blog",
@@ -60,7 +60,7 @@ export default function DashboardAddNewsPage() {
       author: values.author,
       coverImageURL: values.coverImageURL,
       coverDescription: values.coverDescription,
-      content,
+      content: textEditorContent,
     });
     if (response) {
       toast.success("Berita berhasil diperbarui");
@@ -128,17 +128,10 @@ export default function DashboardAddNewsPage() {
       try {
         if (!editBlogId && !editBlogSlug) {
           // CREATE MODE
-          await handleCreateBlog({
-            values,
-            content: textEditorContent,
-          });
+          await handleCreateBlog({ values });
         } else {
           // EDIT MODE
-          await handleUpdateBlog({
-            values,
-            content: textEditorContent,
-            imageUpload,
-          });
+          await handleUpdateBlog({ values });
         }
       } finally {
         setLoadingSave(false);

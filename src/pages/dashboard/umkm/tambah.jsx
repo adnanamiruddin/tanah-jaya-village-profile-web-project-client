@@ -5,6 +5,7 @@ import TextArea from "@/components/layouts/functions/TextArea";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 import PreviewImage from "@/components/layouts/PreviewImage";
+import TextEditor from "@/components/layouts/TextEditor";
 import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
@@ -17,7 +18,7 @@ export default function DashboardAddUmkmPage() {
   const { editUmkmId, editUmkmSlug } = router.query;
 
   const [imageUpload, setImageUpload] = useState("/image-home-hero.jpg");
-  // const [textEditorContent, setTextEditorContent] = useState("");
+  const [textEditorContent, setTextEditorContent] = useState("");
   //
   const [loadingSave, setLoadingSave] = useState(false);
 
@@ -26,7 +27,7 @@ export default function DashboardAddUmkmPage() {
       name: values.name,
       slug: values.slug,
       priceRange: `Rp. ${values.priceRangeStart} - Rp. ${values.priceRangeEnd}`,
-      description: values.description,
+      description: textEditorContent,
       whatsappNumber: values.whatsappNumber,
       imageURL: values.imageURL,
     });
@@ -39,17 +40,15 @@ export default function DashboardAddUmkmPage() {
     }
   };
   //
-  const handleUpdateUmkm = async ({ values, content }) => {
+  const handleUpdateUmkm = async ({ values }) => {
     const { response, error } = await umkmsApi.editUmkm({
       umkmId: editUmkmId,
-      type: "umkm",
-      title: values.title,
+      name: values.name,
       slug: values.slug,
-      status: values.status,
-      author: values.author,
-      coverImageURL: values.coverImageURL,
-      coverDescription: values.coverDescription,
-      content,
+      priceRange: `Rp. ${values.priceRangeStart} - Rp. ${values.priceRangeEnd}`,
+      description: textEditorContent,
+      whatsappNumber: values.whatsappNumber,
+      imageURL: values.imageURL,
     });
     if (response) {
       toast.success("Data UMKM berhasil diperbarui");
@@ -66,7 +65,6 @@ export default function DashboardAddUmkmPage() {
       slug: "",
       priceRangeStart: 0,
       priceRangeEnd: 0,
-      description: "",
       whatsappNumber: "",
       imageURL: "/image-home-hero.jpg",
     },
@@ -88,7 +86,6 @@ export default function DashboardAddUmkmPage() {
       slug: Yup.string().required("Slug harus diisi"),
       priceRangeStart: Yup.number().required("Rentang harga mulai harus diisi"),
       priceRangeEnd: Yup.number().required("Rentang harga akhir harus diisi"),
-      description: Yup.string().required("Deskripsi UMKM harus diisi"),
       whatsappNumber: Yup.string().required(
         "Nomor telepon penjual harus diisi"
       ),
@@ -120,16 +117,10 @@ export default function DashboardAddUmkmPage() {
       try {
         if (!editUmkmId && !editUmkmSlug) {
           // CREATE MODE
-          await handleCreateUmkm({
-            values,
-          });
+          await handleCreateUmkm({ values });
         } else {
           // EDIT MODE
-          await handleUpdateUmkm({
-            values,
-            content: textEditorContent,
-            imageUpload,
-          });
+          await handleUpdateUmkm({ values });
         }
       } finally {
         setLoadingSave(false);
@@ -154,12 +145,14 @@ export default function DashboardAddUmkmPage() {
     });
     if (response) {
       dataForm.setValues({
-        title: response.title,
+        name: response.name,
         slug: response.slug,
-        status: response.status,
-        author: response.author,
-        coverImageURL: response.coverImageURL,
-        coverDescription: response.coverDescription,
+        priceRangeStart: response.priceRange
+          .split(" - ")[0]
+          .replace("Rp. ", ""),
+        priceRangeEnd: response.priceRange.split(" - ")[1].replace("Rp. ", ""),
+        whatsappNumber: response.whatsappNumber,
+        imageURL: response.imageURL,
       });
     }
     if (error) {
@@ -265,21 +258,16 @@ export default function DashboardAddUmkmPage() {
           </div>
         </div>
 
-        <TextArea
-          rows={5}
-          label="Deskripsi"
-          placeholder="Masukkan deskripsi..."
-          name="description"
-          value={dataForm.values.description}
-          onChange={dataForm.handleChange}
-          error={
-            dataForm.touched.description &&
-            dataForm.errors.description !== undefined
-          }
-          helperText={
-            dataForm.touched.description && dataForm.errors.description
-          }
-        />
+        <div className="mt-6">
+          <TextEditor
+            id="umkmTextEditor"
+            label="Deskripsi"
+            content={textEditorContent}
+            setContent={setTextEditorContent}
+            uploadImage
+            showPreview
+          />
+        </div>
 
         <div className="w-full">
           <UploadFileField

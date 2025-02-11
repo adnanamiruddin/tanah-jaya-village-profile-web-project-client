@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 // import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
 import { formatDateToIndo } from "@/helpers/dateHelper";
 import umkmsApi from "@/api/modules/umkm.api";
+import DeleteUmkmModal from "@/components/layouts/modals/DeleteUmkmModal";
 
 export default function DashboardUmkmPage() {
   const router = useRouter();
@@ -99,7 +100,7 @@ export default function DashboardUmkmPage() {
                           onClick={() => {
                             setSelectedUmkmIdToDelete(umkm.id);
                             document
-                              .getElementById("delete_umkm_modal")
+                              .getElementById("DeleteUmkmModal")
                               .showModal();
                           }}
                         >
@@ -119,11 +120,11 @@ export default function DashboardUmkmPage() {
         <Loading />
       )}
 
-      {/* <DeleteInformationModal
-        informationId={selectedInformationIdToDelete}
-        setInformationId={setSelectedInformationIdToDelete}
-        fetchUmkmData={fetchUmkmData}
-      /> */}
+      <DeleteUmkmModal
+        umkmId={selectedUmkmIdToDelete}
+        setUmkmId={setSelectedUmkmIdToDelete}
+        fetchUmkmData={fetchUmkmsData}
+      />
     </div>
   );
 }
