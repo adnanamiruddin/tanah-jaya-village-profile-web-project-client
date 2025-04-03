@@ -133,17 +133,21 @@ export default function NewsDetailPage() {
                 </p>
               </div>
 
-              <div className="mt-2 flex flex-col gap-2">
-                {anotherBlogsData.map((blog, i) => (
-                  <BlogItem
-                    key={i}
-                    image={blog.coverImageURL || "/image-home-hero.jpg"}
-                    title={blog.title}
-                    slug={blog.slug}
-                    date={formatDateToIndo(blog.createdAt)}
-                  />
-                ))}
-              </div>
+              {anotherBlogsData.length > 0 ? (
+                <div className="mt-2 flex flex-col gap-2">
+                  {anotherBlogsData.map((blog, i) => (
+                    <BlogItem
+                      key={i}
+                      image={blog.coverImageURL || "/image-home-hero.jpg"}
+                      title={blog.title}
+                      slug={blog.slug}
+                      date={formatDateToIndo(blog.createdAt)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <NotFound message="Belum ada berita" />
+              )}
             </div>
           </div>
         </div>
