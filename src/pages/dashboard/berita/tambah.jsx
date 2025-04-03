@@ -109,7 +109,7 @@ export default function DashboardAddNewsPage() {
       }
 
       setLoadingSave(true);
-      if (imageUpload) {
+      if (imageUpload && imageUpload instanceof File) {
         try {
           const imageUploadUrl = await uploadImageToFirebaseStorage({
             storageFolderName: "blog_images/cover",
@@ -164,6 +164,7 @@ export default function DashboardAddNewsPage() {
         coverDescription: response.coverDescription,
       });
       setTextEditorContent(response.content);
+      setImageUpload(response.coverImageURL);
     }
     if (error) {
       toast.error(error.message);

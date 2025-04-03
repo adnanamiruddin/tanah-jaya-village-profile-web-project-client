@@ -2,17 +2,11 @@ import AddDataButton from "@/components/layouts/functions/AddDataButton";
 import DeleteButton from "@/components/layouts/functions/DeleteButton";
 import EditButton from "@/components/layouts/functions/EditButton";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
-// import DeleteInformationModal from "@/components/layouts/modals/DeleteInformationModal";
 import NotFound from "@/components/layouts/globals/NotFound";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "@/components/layouts/globals/Loading";
-// import informationApi from "@/api/modules/information.api";
 import { toast } from "react-toastify";
-// import Pagination from "@/components/layouts/functions/Pagination";
-// import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
-import { formatDateToIndo } from "@/helpers/dateHelper";
 import umkmsApi from "@/api/modules/umkm.api";
 import DeleteUmkmModal from "@/components/layouts/modals/DeleteUmkmModal";
 
@@ -123,7 +117,7 @@ export default function DashboardUmkmPage() {
       <DeleteUmkmModal
         umkmId={selectedUmkmIdToDelete}
         setUmkmId={setSelectedUmkmIdToDelete}
-        fetchUmkmData={fetchUmkmsData}
+        fetchUmkmsData={fetchUmkmsData}
       />
     </div>
   );

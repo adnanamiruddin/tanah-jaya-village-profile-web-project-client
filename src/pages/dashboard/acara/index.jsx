@@ -2,17 +2,14 @@ import AddDataButton from "@/components/layouts/functions/AddDataButton";
 import DeleteButton from "@/components/layouts/functions/DeleteButton";
 import EditButton from "@/components/layouts/functions/EditButton";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
-// import DeleteInformationModal from "@/components/layouts/modals/DeleteInformationModal";
 import NotFound from "@/components/layouts/globals/NotFound";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "@/components/layouts/globals/Loading";
-// import informationApi from "@/api/modules/information.api";
 import { toast } from "react-toastify";
-// import Pagination from "@/components/layouts/functions/Pagination";
-// import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
 import { formatDateToIndo } from "@/helpers/dateHelper";
+import schedulesApi from "@/api/modules/schedules.api";
+import DeleteScheduleModal from "@/components/layouts/modals/DeleteScheduleModal";
 
 export default function DashboardSchedulesPage() {
   const router = useRouter();
@@ -21,40 +18,21 @@ export default function DashboardSchedulesPage() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [errorDataLoaded, setErrorDataLoaded] = useState(false);
   //
-  const [selectedInformationIdToDelete, setSelectedInformationIdToDelete] =
+  const [selectedScheduleIdToDelete, setSelectedScheduleIdToDelete] =
     useState(null);
 
   const fetchSchedulesData = async () => {
-    setSchedules([
-      {
-        id: 1,
-        title: "Acara 1",
-        date: "2023-08-02T00:00:00.000Z",
-        location: "Gedung A",
-      },
-      {
-        id: 2,
-        title: "Acara 2",
-        date: "2023-08-03T00:00:00.000Z",
-        location: "Gedung B",
-      },
-    ]);
-    setIsDataLoaded(true);
-
-    // const { response, error } = await informationApi.blog.getAllBlogs({
-    //   page,
-    // });
-    // if (response) {
-    //   setSchedules(response.data);
-    //   setTotalPage(response.pagination.lastPage);
-    //   setTimeout(() => {
-    //     setIsDataLoaded(true);
-    //   }, 1000);
-    // }
-    // if (error) {
-    //   setErrorDataLoaded(true);
-    //   toast.error("Gagal memuat data");
-    // }
+    const { response, error } = await schedulesApi.getAllSchedules();
+    if (response) {
+      setSchedules(response);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 1000);
+    }
+    if (error) {
+      setErrorDataLoaded(true);
+      toast.error(error.message);
+    }
   };
   //
   useEffect(() => {
@@ -92,26 +70,26 @@ export default function DashboardSchedulesPage() {
               </thead>
               {schedules?.length > 0 ? (
                 <tbody>
-                  {schedules.map((schedules, i) => (
+                  {schedules.map((schedule, i) => (
                     <tr
                       key={i}
                       className="text-black flex items-center gap-2 py-5 px-1 border-b-2 border-gray-300"
                     >
                       <td className="w-[5%] text-start ps-2">{i + 1}</td>
                       <td className="w-[35%] text-start break-words">
-                        {schedules.title}
+                        {schedule.name}
                       </td>
                       <td className="w-[20%] text-start">
-                        {formatDateToIndo(schedules.date)}
+                        {formatDateToIndo(schedule.date)}
                       </td>
                       <td className="w-[20%] text-start">
-                        {schedules.location}
+                        {schedule.location}
                       </td>
                       <td className="w-[20%] text-start flex items-center gap-2">
                         <EditButton
                           onClick={() =>
                             router.push(
-                              `/dashboard/acara/tambah?editSchedulesId=${schedules.id}`
+                              `/dashboard/acara/tambah?editScheduleId=${schedule.id}`
                             )
                           }
                         >
@@ -120,9 +98,9 @@ export default function DashboardSchedulesPage() {
                         {/*  */}
                         <DeleteButton
                           onClick={() => {
-                            setSelectedSchedulesIdToDelete(schedules.id);
+                            setSelectedScheduleIdToDelete(schedule.id);
                             document
-                              .getElementById("delete_schedules_modal")
+                              .getElementById("DeleteScheduleModal")
                               .showModal();
                           }}
                         >
@@ -142,11 +120,11 @@ export default function DashboardSchedulesPage() {
         <Loading />
       )}
 
-      {/* <DeleteInformationModal
-        informationId={selectedInformationIdToDelete}
-        setInformationId={setSelectedInformationIdToDelete}
+      <DeleteScheduleModal
+        scheduleId={selectedScheduleIdToDelete}
+        setScheduleId={setSelectedScheduleIdToDelete}
         fetchSchedulesData={fetchSchedulesData}
-      /> */}
+      />
     </div>
   );
 }

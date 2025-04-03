@@ -1,3 +1,4 @@
+import sotksApi from "@/api/modules/sotks.api";
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
@@ -12,100 +13,64 @@ import * as Yup from "yup";
 
 export default function DashboardAddSotkPage() {
   const router = useRouter();
-  const { editSotkId, editSotkSlug } = router.query;
+  const { editSotkId } = router.query;
 
   const [imageUpload, setImageUpload] = useState("/image-home-hero.jpg");
-  // const [textEditorContent, setTextEditorContent] = useState("");
   //
   const [loadingSave, setLoadingSave] = useState(false);
 
   const handleCreateSotk = async ({ values }) => {
     const { response, error } = await sotksApi.createSotk({
       name: values.name,
-      slug: values.slug,
-      priceRange: `Rp. ${values.priceRangeStart} - Rp. ${values.priceRangeEnd}`,
-      description: values.description,
-      whatsappNumber: values.whatsappNumber,
-      imageURL: values.imageURL,
+      position: values.position,
+      photoURL: values.photoURL,
     });
     if (response) {
-      toast.success("Data SOTK berhasil dibuat");
-      router.push("/dashboard/sotk");
+      toast.success("Data pegawai berhasil dibuat");
+      router.push("/dashboard/profil-kelurahan/sotk");
     }
     if (error) {
-      toast.error(error.message || "Gagal membuat data SOTK");
+      toast.error(error.message || "Gagal membuat data pegawai");
     }
   };
   //
-  const handleUpdateSotk = async ({ values, content }) => {
+  const handleUpdateSotk = async ({ values }) => {
     const { response, error } = await sotksApi.editSotk({
       sotkId: editSotkId,
-      type: "sotk",
-      title: values.title,
-      slug: values.slug,
-      status: values.status,
-      author: values.author,
-      coverImageURL: values.coverImageURL,
-      coverDescription: values.coverDescription,
-      content,
+      name: values.name,
+      position: values.position,
+      photoURL: values.photoURL,
     });
     if (response) {
-      toast.success("Data SOTK berhasil diperbarui");
-      router.push("/dashboard/sotk");
+      toast.success("Data pegawai berhasil diperbarui");
+      router.push("/dashboard/profil-kelurahan/sotk");
     }
     if (error) {
-      toast.error(error.message || "Gagal memperbarui data SOTK");
+      toast.error(error.message || "Gagal memperbarui data pegawai");
     }
   };
 
   const dataForm = useFormik({
     initialValues: {
       name: "",
-      slug: "",
-      priceRangeStart: 0,
-      priceRangeEnd: 0,
-      description: "",
-      whatsappNumber: "",
-      imageURL: "",
+      position: "",
+      photoURL: "/image-home-hero.jpg",
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .required("Judul harus diisi")
-        .min(2, "Judul minimal 2 karakter")
-        .max(255, "Judul maksimal 255 karakter")
-        .matches(/^(?!\s*$).+/, "Judul tidak boleh hanya berisi spasi")
-        .matches(/^(?!\W+$).+/, "Judul tidak boleh hanya karakter spesial")
-        // Judul tidak boleh ada "&" karena akan merusak URL
-        .test(
-          "no-ampersand",
-          "Judul tidak boleh mengandung karakter '&'",
-          (value) => {
-            return !value || !value.includes("&");
-          }
-        ),
-      slug: Yup.string().required("Slug harus diisi"),
-      priceRangeStart: Yup.number().required("Rentang harga mulai harus diisi"),
-      priceRangeEnd: Yup.number().required("Rentang harga akhir harus diisi"),
-      description: Yup.string().required("Deskripsi SOTK harus diisi"),
-      whatsappNumber: Yup.string().required(
-        "Nomor telepon penjual harus diisi"
-      ),
+      name: Yup.string().required("Nama pegawai wajib diisi"),
+      position: Yup.string().required("Jabatan pegawai wajib diisi"),
     }),
     onSubmit: async (values) => {
       if (loadingSave) return;
-      // if (textEditorContent === "") {
-      //   toast.error("Konten sotk tidak boleh kosong");
-      //   return;
-      // }
 
       setLoadingSave(true);
-      if (imageUpload) {
+      if (imageUpload && imageUpload instanceof File) {
         try {
           const imageUploadUrl = await uploadImageToFirebaseStorage({
             storageFolderName: "sotk_images/cover",
             image: imageUpload,
           });
-          values.coverImageURL = imageUploadUrl;
+          values.photoURL = imageUploadUrl;
         } catch (error) {
           toast.error(
             "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
@@ -116,7 +81,7 @@ export default function DashboardAddSotkPage() {
       }
 
       try {
-        if (!editSotkId && !editSotkSlug) {
+        if (!editSotkId) {
           // CREATE MODE
           await handleCreateSotk({
             values,
@@ -125,8 +90,6 @@ export default function DashboardAddSotkPage() {
           // EDIT MODE
           await handleUpdateSotk({
             values,
-            content: textEditorContent,
-            imageUpload,
           });
         }
       } finally {
@@ -135,30 +98,18 @@ export default function DashboardAddSotkPage() {
     },
   });
 
-  // SLUG GENERATOR
-  useEffect(() => {
-    const name = dataForm.values.name;
-    const nameToSlug = name
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^\w-]+/g, "");
-    dataForm.setFieldValue("slug", nameToSlug);
-  }, [dataForm.values.name]);
-
   // EDIT MODE
   const fetchExistingData = async () => {
-    const { response, error } = await sotksApi.getSotkBySlug({
-      slug: editSotkSlug,
+    const { response, error } = await sotksApi.getSotkById({
+      sotkId: editSotkId,
     });
     if (response) {
       dataForm.setValues({
-        title: response.title,
-        slug: response.slug,
-        status: response.status,
-        author: response.author,
-        coverImageURL: response.coverImageURL,
-        coverDescription: response.coverDescription,
+        name: response.name,
+        position: response.position,
+        photoURL: response.photoURL,
       });
+      setImageUpload(response.photoURL);
     }
     if (error) {
       toast.error(error.message);
@@ -166,8 +117,8 @@ export default function DashboardAddSotkPage() {
   };
   //
   useEffect(() => {
-    if (editSotkId && editSotkSlug) fetchExistingData();
-  }, [editSotkId, editSotkSlug]);
+    if (editSotkId) fetchExistingData();
+  }, [editSotkId]);
 
   return (
     <div className="h-full overflow-hidden">
@@ -209,17 +160,14 @@ export default function DashboardAddSotkPage() {
             <Input
               label="Jabatan"
               placeholder="Masukkan jabatan..."
-              name="whatsappNumber"
-              value={dataForm.values.whatsappNumber}
+              name="position"
+              value={dataForm.values.position}
               onChange={dataForm.handleChange}
               error={
-                dataForm.touched.whatsappNumber &&
-                dataForm.errors.whatsappNumber !== undefined
+                dataForm.touched.position &&
+                dataForm.errors.position !== undefined
               }
-              helperText={
-                dataForm.touched.whatsappNumber &&
-                dataForm.errors.whatsappNumber
-              }
+              helperText={dataForm.touched.position && dataForm.errors.position}
             />
           </div>
         </div>

@@ -2,18 +2,13 @@ import AddDataButton from "@/components/layouts/functions/AddDataButton";
 import DeleteButton from "@/components/layouts/functions/DeleteButton";
 import EditButton from "@/components/layouts/functions/EditButton";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
-// import DeleteInformationModal from "@/components/layouts/modals/DeleteInformationModal";
 import NotFound from "@/components/layouts/globals/NotFound";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "@/components/layouts/globals/Loading";
-// import informationApi from "@/api/modules/information.api";
 import { toast } from "react-toastify";
-// import Pagination from "@/components/layouts/functions/Pagination";
-// import LoadingPagination from "@/components/layouts/globals/LoadingPagination";
-import { formatDateToIndo } from "@/helpers/dateHelper";
-// import sotksApi from "@/api/modules/sotk.api";
+import sotksApi from "@/api/modules/sotks.api";
+import DeleteSotkModal from "@/components/layouts/modals/DeleteSotkModal";
 
 export default function DashboardSotkPage() {
   const router = useRouter();
@@ -25,36 +20,17 @@ export default function DashboardSotkPage() {
   const [selectedSotkIdToDelete, setSelectedSotkIdToDelete] = useState(null);
 
   const fetchSotksData = async () => {
-    setSotks([
-      {
-        id: 1,
-        name: "Pegawai 1",
-        position: "Ketua",
-        createdAt: "2023-06-14T15:30:00.000Z",
-        updatedAt: "2023-06-14T15:30:00.000Z",
-      },
-      {
-        id: 2,
-        name: "Pegawai 2",
-        position: "Sekretaris",
-        createdAt: "2023-06-14T15:30:00.000Z",
-        updatedAt: "2023-06-14T15:30:00.000Z",
-      },
-    ]);
-    setTimeout(() => {
-      setIsDataLoaded(true);
-    }, 1000);
-    // const { response, error } = await sotksApi.getAllSotks();
-    // if (response) {
-    //   setSotks(response);
-    //   setTimeout(() => {
-    //     setIsDataLoaded(true);
-    //   }, 1000);
-    // }
-    // if (error) {
-    //   setErrorDataLoaded(true);
-    //   toast.error(error.message);
-    // }
+    const { response, error } = await sotksApi.getAllSotks();
+    if (response) {
+      setSotks(response);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 1000);
+    }
+    if (error) {
+      setErrorDataLoaded(true);
+      toast.error(error.message);
+    }
   };
   //
   useEffect(() => {
@@ -109,7 +85,7 @@ export default function DashboardSotkPage() {
                         <EditButton
                           onClick={() =>
                             router.push(
-                              `/dashboard/sotk/tambah?editSotkId=${sotk.id}&editSotkSlug=${sotk.slug}`
+                              `/dashboard/profil-kelurahan/sotk/tambah?editSotkId=${sotk.id}`
                             )
                           }
                         >
@@ -120,7 +96,7 @@ export default function DashboardSotkPage() {
                           onClick={() => {
                             setSelectedSotkIdToDelete(sotk.id);
                             document
-                              .getElementById("delete_sotk_modal")
+                              .getElementById("DeleteSotkModal")
                               .showModal();
                           }}
                         >
@@ -140,11 +116,11 @@ export default function DashboardSotkPage() {
         <Loading />
       )}
 
-      {/* <DeleteInformationModal
-        informationId={selectedInformationIdToDelete}
-        setInformationId={setSelectedInformationIdToDelete}
-        fetchSotkData={fetchSotkData}
-      /> */}
+      <DeleteSotkModal
+        sotkId={selectedSotkIdToDelete}
+        setSotkId={setSelectedSotkIdToDelete}
+        fetchSotksData={fetchSotksData}
+      />
     </div>
   );
 }

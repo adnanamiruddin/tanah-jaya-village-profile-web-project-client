@@ -3,39 +3,39 @@ import { toast } from "react-toastify";
 import ModalCancelButton from "../functions/ModalCancelButton";
 import ModalSubmitButton from "../functions/ModalSubmitButton";
 import ConfirmDeleteItemModal from "./ConfirmDeleteItemModal";
-import umkmsApi from "@/api/modules/umkm.api";
+import sotksApi from "@/api/modules/sotks.api";
 
-export default function DeleteUmkmModal({ umkmId, setUmkmId, fetchUmkmsData }) {
+export default function DeleteSotkModal({ sotkId, setSotkId, fetchSotksData }) {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
     setLoading(true);
-    const { response, error } = await umkmsApi.deleteUmkm({
-      umkmId,
+    const { response, error } = await sotksApi.deleteSotk({
+      sotkId,
     });
     if (response) {
-      document.getElementById("DeleteUmkmModal").close();
+      document.getElementById("DeleteSotkModal").close();
       document.getElementById("ConfirmDeleteItemModal").close();
-      toast.success("Data UMKM berhasil dihapus");
+      toast.success("Data pegawai berhasil dihapus");
       //
       setLoading(false);
-      setUmkmId(null);
-      fetchUmkmsData();
+      setSotkId(null);
+      fetchSotksData();
     }
     if (error) {
-      document.getElementById("DeleteUmkmModal").close();
+      document.getElementById("DeleteSotkModal").close();
       document.getElementById("ConfirmDeleteItemModal").close();
       toast.error(
-        "Gagal menghapus data UMKM. Silakan coba lagi atau hubungi administrator"
+        "Gagal menghapus data pegawai. Silakan coba lagi atau hubungi administrator"
       );
       //
       setLoading(false);
-      setUmkmId(null);
+      setSotkId(null);
     }
   };
 
   return (
-    <dialog id="DeleteUmkmModal" className="modal">
+    <dialog id="DeleteSotkModal" className="modal">
       <div className="modal-box bg-white w-11/12 max-w-3xl rounded-lg">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">
@@ -43,17 +43,17 @@ export default function DeleteUmkmModal({ umkmId, setUmkmId, fetchUmkmsData }) {
           </button>
         </form>
         <h1 className="font-bold text-xl border-b border-gray-400 pb-4 -mt-2 -mx-6 px-6">
-          Hapus Data UMKM
+          Hapus Data Pegawai
         </h1>
 
         <div className="mt-4">
           <p className="text-lg">
-            Apakah Anda yakin ingin menghapus data UMKM ini?
+            Apakah Anda yakin ingin menghapus data pegawai ini?
           </p>
 
           <div className="mt-6 flex justify-end items-center gap-3">
             <ModalCancelButton
-              onClick={() => document.getElementById("DeleteUmkmModal").close()}
+              onClick={() => document.getElementById("DeleteSotkModal").close()}
             >
               Batal
             </ModalCancelButton>
@@ -69,7 +69,7 @@ export default function DeleteUmkmModal({ umkmId, setUmkmId, fetchUmkmsData }) {
         </div>
 
         <ConfirmDeleteItemModal
-          content="UMKM"
+          content="Pegawai"
           handleDelete={handleDelete}
           loading={loading}
         />

@@ -1,7 +1,6 @@
 import umkmsApi from "@/api/modules/umkm.api";
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
-import TextArea from "@/components/layouts/functions/TextArea";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 import PreviewImage from "@/components/layouts/PreviewImage";
@@ -92,13 +91,13 @@ export default function DashboardAddUmkmPage() {
     }),
     onSubmit: async (values) => {
       if (loadingSave) return;
-      // if (textEditorContent === "") {
-      //   toast.error("Konten umkm tidak boleh kosong");
-      //   return;
-      // }
+      if (textEditorContent === "") {
+        toast.error("Deskripsi tidak boleh kosong");
+        return;
+      }
 
       setLoadingSave(true);
-      if (imageUpload) {
+      if (imageUpload && imageUpload instanceof File) {
         try {
           const imageUploadUrl = await uploadImageToFirebaseStorage({
             storageFolderName: "umkm_images/cover",
@@ -154,6 +153,8 @@ export default function DashboardAddUmkmPage() {
         whatsappNumber: response.whatsappNumber,
         imageURL: response.imageURL,
       });
+      setTextEditorContent(response.description);
+      setImageUpload(response.imageURL);
     }
     if (error) {
       toast.error(error.message);

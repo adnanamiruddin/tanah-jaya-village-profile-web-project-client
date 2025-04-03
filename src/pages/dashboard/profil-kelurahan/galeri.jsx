@@ -1,21 +1,77 @@
+import galleryApi from "@/api/modules/gallery.api";
 import Input from "@/components/layouts/functions/Input";
 import SaveButton from "@/components/layouts/functions/SaveButton";
 import TextArea from "@/components/layouts/functions/TextArea";
 import UploadFileField from "@/components/layouts/functions/UploadFileField";
 import DashboardHeader from "@/components/layouts/globals/dashboard-nav/DashboardHeader";
 import PreviewImage from "@/components/layouts/PreviewImage";
-import { useState } from "react";
+import { uploadImageToFirebaseStorage } from "@/helpers/firebaseStorageHelper";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function DashboardGalleryPage() {
-  const [image1, setImage1] = useState("");
-  const [image2, setImage2] = useState("");
-  const [image3, setImage3] = useState("");
-  const [image4, setImage4] = useState("");
-  const [image5, setImage5] = useState("");
-  const [image6, setImage6] = useState("");
-  const [image7, setImage7] = useState("");
-  const [image8, setImage8] = useState("");
-  const [image9, setImage9] = useState("");
+  const [images, setImages] = useState(
+    Array.from({ length: 9 }, () => ({
+      title: "",
+      description: "",
+      url: "/image-home-hero.jpg",
+      file: null,
+    }))
+  );
+  //
+  const [loadingSave, setLoadingSave] = useState(false);
+
+  const fetchData = async () => {
+    const { response, error } = await galleryApi.getGallery();
+    if (response) {
+      const formattedImages = Array.from({ length: 9 }, (_, i) => ({
+        title: response[`image${i + 1}Title`] || "",
+        description: response[`image${i + 1}Description`] || "",
+        url: response[`image${i + 1}URL`] || "/image-home-hero.jpg",
+        file: null,
+      }));
+      setImages(formattedImages);
+    }
+    if (error) {
+      toast.error(error.message);
+    }
+  };
+  //
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSaveButtonClicked = async () => {
+    if (loadingSave) return;
+
+    setLoadingSave(true);
+    try {
+      const uploadedImages = await Promise.all(
+        images.map(async (image) => {
+          if (image.file) {
+            const imageUploadUrl = await uploadImageToFirebaseStorage({
+              storageFolderName: "gallery",
+              image: image.file,
+            });
+            return { ...image, url: imageUploadUrl, file: null };
+          }
+          return image;
+        })
+      );
+
+      const { response, error } = await galleryApi.saveGallery(uploadedImages);
+      if (response) {
+        toast.success("Berhasil menyimpan data");
+      } else if (error) {
+        toast.error(error.message);
+      }
+    } catch (error) {
+      toast.error(
+        "Terjadi kesalahan saat mengupload gambar. Silahkan coba lagi"
+      );
+    }
+    setLoadingSave(false);
+  };
 
   return (
     <div className="h-full overflow-hidden">
@@ -27,382 +83,59 @@ export default function DashboardGalleryPage() {
           {/*  */}
           <SaveButton
             name="saveButton"
-            // onClick={handleSaveFacilities}
-            // disabled={loading}
+            onClick={handleSaveButtonClicked}
+            disabled={loadingSave}
           >
             Simpan
           </SaveButton>
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 1"
-                onChange={(e) => {
-                  setImage1(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image1} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
+          {images.map((image, i) => (
+            <div key={i} className="flex gap-5">
+              <div className="w-1/2">
+                <UploadFileField
+                  label={`Foto ${i + 1}`}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const newImages = [...images];
+                    newImages[i] = {
+                      ...newImages[i],
+                      file,
+                      url: URL.createObjectURL(file),
+                    };
+                    setImages(newImages);
+                  }}
+                />
+                <PreviewImage image={image.url || "/image-home-hero.jpg"} />
+              </div>
 
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 2"
-                onChange={(e) => {
-                  setImage2(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image2} />
+              <div className="w-1/2">
+                <Input
+                  label="Judul"
+                  placeholder="Masukkan judul foto..."
+                  value={image.title}
+                  onChange={(e) => {
+                    const newImages = [...images];
+                    newImages[i].title = e.target.value;
+                    setImages(newImages);
+                  }}
+                />
+                <TextArea
+                  rows={5}
+                  label="Deskripsi"
+                  placeholder="Masukkan deskripsi foto..."
+                  value={image.description}
+                  onChange={(e) => {
+                    const newImages = [...images];
+                    newImages[i].description = e.target.value;
+                    setImages(newImages);
+                  }}
+                />
+              </div>
             </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 3"
-                onChange={(e) => {
-                  setImage3(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image3} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 4"
-                onChange={(e) => {
-                  setImage4(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image4} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 5"
-                onChange={(e) => {
-                  setImage5(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image5} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 6"
-                onChange={(e) => {
-                  setImage6(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image6} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 7"
-                onChange={(e) => {
-                  setImage7(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image7} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 8"
-                onChange={(e) => {
-                  setImage8(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image8} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-5">
-            <div className="w-1/2">
-              <UploadFileField
-                label="Foto 9"
-                onChange={(e) => {
-                  setImage9(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-              <PreviewImage image={image9} />
-            </div>
-            {/*  */}
-            <div className="w-1/2">
-              <Input
-                label="Judul"
-                placeholder="Masukkan judul foto..."
-                name="headOfFamily"
-                // value={addDataForm.values.villageHeadName}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName !== undefined
-                // }
-                // helperText={addDataForm.touched.villageHeadName && addDataForm.errors.villageHeadName}
-              />
-              <TextArea
-                rows={5}
-                label="Deskripsi"
-                placeholder="Masukkan deskripsi foto..."
-                name="description"
-                // value={addDataForm.values.imageDesc}
-                // onChange={addDataForm.handleChange}
-                // error={
-                //   addDataForm.touched.imageDesc &&
-                //   addDataForm.errors.imageDesc !== undefined
-                // }
-                // helperText={
-                //   addDataForm.touched.imageDesc && addDataForm.errors.imageDesc
-                // }
-              />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

@@ -23,6 +23,9 @@ import blogsApi from "@/api/modules/blogs.api";
 import he from "he";
 import { formatDateToIndo } from "@/helpers/dateHelper";
 import umkmsApi from "@/api/modules/umkm.api";
+import sotksApi from "@/api/modules/sotks.api";
+import schedulesApi from "@/api/modules/schedules.api";
+import galleryApi from "@/api/modules/gallery.api";
 
 const HomeMapLocation = dynamic(
   () => import("@/components/layouts/HomeMapLocation"),
@@ -51,7 +54,14 @@ export default function HomePage() {
   const [sotksData, setSotksData] = useState([]);
   const [infograpichsData, setInfograpichsData] = useState(null);
   const [umkmsData, setUmkmData] = useState([]);
-  const [galleryData, setGalleryData] = useState(null);
+  const [galleryData, setGalleryData] = useState(
+    Array.from({ length: 9 }, () => ({
+      title: "",
+      description: "",
+      url: "/image-home-hero.jpg",
+      file: null,
+    }))
+  );
   const [schedulesData, setSchedulesData] = useState([]);
   const [blogsData, setBlogsData] = useState([]);
 
@@ -68,15 +78,15 @@ export default function HomePage() {
   };
   //
   const fetchSotksData = async () => {
-    fetchInfographicsData();
-    // const { response, error } = await greetingsApi.getGreeting();
-    // if (response) {
-    //   setGreetingData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await sotksApi.getAllSotks();
+    if (response) {
+      setSotksData(response);
+      fetchInfographicsData();
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   const fetchInfographicsData = async () => {
@@ -104,27 +114,32 @@ export default function HomePage() {
   };
   //
   const fetchGalleryData = async () => {
-    fetchSchedulesData();
-    // const { response, error } = await infographicsApi.getInfographic();
-    // if (response) {
-    //   setInfograpichsData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await galleryApi.getGallery();
+    if (response) {
+      const formattedImages = Array.from({ length: 9 }, (_, index) => ({
+        title: response[`image${index + 1}Title`] || "",
+        description: response[`image${index + 1}Description`] || "",
+        url: response[`image${index + 1}URL`] || "",
+      }));
+      setGalleryData(formattedImages);
+      fetchSchedulesData();
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   const fetchSchedulesData = async () => {
-    fetchBlogsData();
-    // const { response, error } = await infographicsApi.getInfographic();
-    // if (response) {
-    //   setInfograpichsData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await schedulesApi.getAllSchedules();
+    if (response) {
+      setSchedulesData(response);
+      fetchBlogsData();
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   const fetchBlogsData = async () => {
@@ -273,46 +288,15 @@ export default function HomePage() {
               Struktur Organisasi dan Tata Kerja Kelurahan Tanah Jaya
             </p>
 
-            <div
-              className="flex gap-4 overflow-auto"
-              // data-aos="fade-right"
-            >
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
+            <div className="flex gap-4 overflow-auto">
+              {sotksData.slice(0, 6).map((sotk, i) => (
+                <EmployeeItem
+                  key={i}
+                  name={sotk.name}
+                  position={sotk.position}
+                  photo={sotk.photoURL}
+                />
+              ))}
             </div>
 
             <div className="mt-4">
@@ -391,7 +375,7 @@ export default function HomePage() {
             </p>
 
             <div className="flex gap-4 overflow-auto">
-              {umkmsData.map((umkm, i) => (
+              {umkmsData.slice(0, 6).map((umkm, i) => (
                 <UmkmItem
                   key={i}
                   image={
@@ -420,49 +404,15 @@ export default function HomePage() {
               Menampilkan foto-foto di sekitar Kelurahan Tanah Jaya
             </p>
 
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
-              <div className="col-span-2 md:col-span-1">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-4">
+              {galleryData.map((image, i) => (
                 <ImageHoverEffect
-                  src="/image-home-hero.jpg"
-                  title="Taman Karaeng Bapa"
-                  description="Foto Tanah Jaya"
+                  key={i}
+                  src={image.url}
+                  title={image.title}
+                  description={image.description}
                 />
-              </div>
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
+              ))}
             </div>
           </div>
 
@@ -476,27 +426,14 @@ export default function HomePage() {
             </p>
 
             <div className="flex gap-4 overflow-auto">
-              <ScheduleItem
-                title="Rapat Kelurahan"
-                date="Senin, 12 Agustus 2021"
-                location="Kantor Lurah Tanah Jaya"
-              />
-
-              <ScheduleItem
-                title="Lomba Volley KKN 113 Tanah Jaya"
-                date="Senin, 12 Agustus 2021"
-                location="Kantor Lurah Tanah Jaya"
-              />
-              <ScheduleItem
-                title="Jum'at Bersih Tanah Jaya"
-                date="Senin, 12 Agustus 2021"
-                location="Kantor Lurah Tanah Jaya"
-              />
-              <ScheduleItem
-                title="Donor Darah Dalam Rangka 17 Agustus 2025"
-                date="Senin, 12 Agustus 2021"
-                location="Kantor Lurah Tanah Jaya"
-              />
+              {schedulesData.slice(0, 6).map((schedule, i) => (
+                <ScheduleItem
+                  key={i}
+                  title={schedule.name}
+                  date={formatDateToIndo(schedule.date)}
+                  location={schedule.location}
+                />
+              ))}
             </div>
 
             <HrefGradientButton href="/acara">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function EmployeeItem({ photo, name, position }) {
+export default function EmployeeItem({ name, position, photo }) {
   return (
     <div className="border border-gray-200 rounded-md flex-shrink-0 md:flex-grow">
       <Image

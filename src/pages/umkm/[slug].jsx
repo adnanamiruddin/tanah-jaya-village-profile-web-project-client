@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import umkmsApi from "@/api/modules/umkm.api";
 import NotFound from "@/components/layouts/globals/NotFound";
 import Loading from "@/components/layouts/globals/Loading";
+import he from "he";
+import { toast } from "react-toastify";
 
 export default function UmkmDetailPage() {
   const router = useRouter();
@@ -44,10 +46,6 @@ export default function UmkmDetailPage() {
         <NotFound />
       ) : isDataLoaded ? (
         <div className="pb-4 md:px-24 md:mt-4 md:pb-10">
-          {/* <h1 className="text-3xl font-bold text-center mb-4 text-sky-700">
-              Detail UMKM
-            </h1> */}
-
           <div className="text-center pt-1">
             <h1 className="text-3xl font-bold text-sky-800 mb-4 md:mb-6">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-teal-500">
@@ -78,8 +76,16 @@ export default function UmkmDetailPage() {
               <p className="italic text-sm text-gray-500">*Kisaran harga</p>
 
               <p className="mt-3 text-justify">
-                <GrNotes className="inline me-1" />
-                {umkmData.description}
+                <div className="flex items-center gap-2">
+                  <GrNotes className="text-2xl mt-0.5" />{" "}
+                  <p className="font-semibold text-xl">Seputar UMKM :</p>
+                </div>
+                <div
+                  className="sanitized-content mt-2 rounded"
+                  dangerouslySetInnerHTML={{
+                    __html: he.decode(umkmData.description),
+                  }}
+                ></div>
               </p>
 
               <Link

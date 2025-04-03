@@ -9,6 +9,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import he from "he";
+import sotksApi from "@/api/modules/sotks.api";
+import galleryApi from "@/api/modules/gallery.api";
 
 export default function VillageProfilePage() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -16,7 +18,14 @@ export default function VillageProfilePage() {
 
   const [vissionAndMissionData, setVissionAndMissionData] = useState(null);
   const [sotksData, setSotksData] = useState(null);
-  const [galleryData, setGalleryData] = useState(null);
+  const [galleryData, setGalleryData] = useState(
+    Array.from({ length: 9 }, () => ({
+      title: "",
+      description: "",
+      url: "/image-home-hero.jpg",
+      file: null,
+    }))
+  );
 
   const fetchVissionAndMissionData = async () => {
     const { response, error } =
@@ -32,29 +41,34 @@ export default function VillageProfilePage() {
   };
   //
   const fetchSotksData = async () => {
-    fetchGalleryData();
-    // const { response, error } = await greetingsApi.getGreeting();
-    // if (response) {
-    //   setGreetingData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await sotksApi.getAllSotks();
+    if (response) {
+      setSotksData(response);
+      fetchGalleryData();
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   const fetchGalleryData = async () => {
-    setTimeout(() => {
-      setIsDataLoaded(true);
-    }, 500);
-    // const { response, error } = await infographicsApi.getInfographic();
-    // if (response) {
-    //   setInfograpichsData(response);
-    // }
-    // if (error) {
-    //   toast.error(error.message);
-    //   setErrorDataLoaded(true);
-    // }
+    const { response, error } = await galleryApi.getGallery();
+    if (response) {
+      const formattedImages = Array.from({ length: 9 }, (_, index) => ({
+        title: response[`image${index + 1}Title`] || "",
+        description: response[`image${index + 1}Description`] || "",
+        url: response[`image${index + 1}URL`] || "",
+      }));
+      setGalleryData(formattedImages);
+      setTimeout(() => {
+        setIsDataLoaded(true);
+      }, 500);
+    }
+    if (error) {
+      toast.error(error.message);
+      setErrorDataLoaded(true);
+    }
   };
   //
   useEffect(() => {
@@ -151,42 +165,14 @@ export default function VillageProfilePage() {
             </p>
 
             <div className="flex gap-4 overflow-auto md:grid grid-cols-4">
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
-              <EmployeeItem
-                photo="/icon-man.png"
-                name="Nama Pegawai"
-                position="Jabatan"
-              />
+              {sotksData.map((sotk, i) => (
+                <EmployeeItem
+                  key={i}
+                  name={sotk.name}
+                  position={sotk.position}
+                  photo={sotk.photoURL}
+                />
+              ))}
             </div>
           </div>
 
@@ -200,46 +186,14 @@ export default function VillageProfilePage() {
             </p>
 
             <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-4">
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-                description="Foto Tanah Jaya"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
-              <ImageHoverEffect
-                src="/image-home-hero.jpg"
-                title="Taman Karaeng Bapa"
-              />
+              {galleryData.map((image, i) => (
+                <ImageHoverEffect
+                  key={i}
+                  src={image.url}
+                  title={image.title}
+                  description={image.description}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ export default function ImageHoverEffect({ src, title, description }) {
         <Image
           width={500}
           height={500}
-          className="h-auto max-w-full rounded-lg"
+          className="rounded-lg md:object-cover md:h-[300px]"
           src={src}
           alt={title}
         />
